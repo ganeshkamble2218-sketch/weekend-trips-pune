@@ -1,0 +1,1 @@
+document.querySelectorAll('.row a').forEach(a=>a.addEventListener('click',()=>{a.style.opacity='.65'}));
