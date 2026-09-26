@@ -6,6 +6,7 @@
 <meta name="description" content="Weekend Trips Pune — affordable weekend getaways to Kaas Pathar, Kokan, Matheran and Mahabaleshwar.">
 <title>Weekend Trips Pune | Explore. Escape. Repeat.</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 <nav><div class="logo">Weekend<span>Trips</span> Pune</div><a class="navbook" href="#booking">Book Now</a></nav>
@@ -28,6 +29,14 @@
 <article class="trip"><div class="photo maha"><span>🌄</span></div><div class="tripbody"><p class="tag">MOUNTAINS</p><h3>Mahabaleshwar</h3><p>Cool weather, scenic viewpoints and a memorable mountain escape.</p><div class="row"><strong>₹1000</strong><a href="#booking" data-trip="Mahabaleshwar">Book Trip →</a></div></div></article>
 </div>
 </section>
+<section class="packages" id="packages">
+<div class="packages-head"><div><p class="eyebrow">HOLIDAY PACKAGES</p><h2>Choose your weekend escape</h2></div><p>Simple packages from Pune with clear pricing, pickup points and seat selection.</p></div>
+<div class="package-grid">
+<div class="package-card"><div class="package-icon">🌸</div><div><span>NATURE • WEEKEND</span><h3>Kaas Pathar</h3><p>Valley of flowers, scenic views and a refreshing nature getaway.</p><b>₹1,499 <small>per person</small></b><a href="#booking" data-trip="Kaas Pathar">View & Book →</a></div></div>
+<div class="package-card"><div class="package-icon">🌊</div><div><span>BEACH • WEEKEND</span><h3>Kokan</h3><p>Coastal roads, greenery and a relaxed weekend with friends.</p><b>₹1,050 <small>per person</small></b><a href="#booking" data-trip="Kokan">View & Book →</a></div></div>
+<div class="package-card"><div class="package-icon">🏔️</div><div><span>HILLS • WEEKEND</span><h3>Matheran</h3><p>Fresh mountain air, viewpoints and a peaceful hill-station escape.</p><b>₹999 <small>per person</small></b><a href="#booking" data-trip="Matheran">View & Book →</a></div></div>
+<div class="package-card"><div class="package-icon">🌄</div><div><span>MOUNTAINS • WEEKEND</span><h3>Mahabaleshwar</h3><p>Cool weather, beautiful viewpoints and a classic mountain trip.</p><b>₹1,000 <small>per person</small></b><a href="#booking" data-trip="Mahabaleshwar">View & Book →</a></div></div>
+</div></section>
 <section id="booking" class="booking">
 <div class="booking-card">
 <p class="eyebrow">BOOK YOUR TRIP</p>
@@ -41,7 +50,7 @@
 </div>
 <div class="seat-legend"><span><i class="available"></i>Available</span><span><i class="chosen"></i>Selected</span><span><i class="blocked"></i>Booked</span></div>
 <div class="bus-board"><p class="admin-note">Your seats can be changed by admin</p><div class="bus-front"><div>20</div><div>Driver</div></div><div id="seatMap" class="seat-map"></div><div class="bus-count">Bus 1 of 1</div></div>
-<div class="seat-customer"><label>Full Name<input id="seatName" type="text" placeholder="Enter your name"></label><label>Mobile Number<input id="seatPhone" type="tel" placeholder="Enter mobile number" inputmode="numeric"></label><div class="seat-total">Total <strong id="seatTotal">₹0</strong></div><button id="seatBookBtn" class="book-submit" type="button">Confirm Seat Booking →</button></div>
+<div class="seat-customer"><label>Full Name<input id="seatName" type="text" placeholder="Enter your name"></label><label>Mobile Number<input id="seatPhone" type="tel" placeholder="Enter mobile number" inputmode="numeric"></label><div class="seat-total">Total <strong id="seatTotal">₹0</strong></div><button id="seatBookBtn" class="book-submit" type="button">Proceed to Payment →</button></div>
 <p id="seatStatus" class="secure-note"></p></div>
 <p class="old-booking-note">Prefer WhatsApp booking? Use the form below.</p>
 <form id="bookingForm">
@@ -60,9 +69,21 @@
 </div>
 </section>
 <section id="payment" class="payment">
-<div class="payment-card">
-<div class="payment-copy"><p class="eyebrow">SECURE YOUR SEAT</p><h2>Make your payment</h2><p>Pay your selected trip amount using any UPI app by scanning the QR code.</p><div class="upi-box"><span>UPI ID</span><strong>ganeshk1234567amble-2@oksbi</strong></div><p class="payment-note">After payment, tap the button below and send your payment confirmation on WhatsApp.</p><a class="book-submit payment-wa" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune%2C%20I%20have%20made%20the%20trip%20payment.%20Please%20confirm%20my%20booking." target="_blank">I Have Paid — Send Confirmation →</a></div>
-<div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=upi%3A%2F%2Fpay%3Fpa%3Dganeshk1234567amble-2%40oksbi%26pn%3DWeekend%2520Trips%2520Pune" alt="Weekend Trips Pune UPI payment QR code" width="260" height="260"><p>Scan to pay with any UPI app</p></div>
+<div class="payment-card payment-full">
+<div class="payment-copy"><p class="eyebrow">PAYMENT OPTIONS</p><h2>Pay securely</h2><p>Choose a payment method after selecting your destination, date and seats.</p>
+<div class="payment-methods">
+<button type="button" class="pay-method active" data-method="upi"><strong>UPI</strong><span>Any UPI app</span></button>
+<button type="button" class="pay-method" data-method="gpay"><strong>Google Pay</strong><span>UPI payment</span></button>
+<button type="button" class="pay-method" data-method="phonepe"><strong>PhonePe</strong><span>UPI payment</span></button>
+<button type="button" class="pay-method" data-method="paytm"><strong>Paytm</strong><span>UPI payment</span></button>
+<button type="button" class="pay-method gateway" data-method="card"><strong>Debit / Credit Card</strong><span>Secure gateway</span></button>
+<button type="button" class="pay-method gateway" data-method="netbanking"><strong>Net Banking</strong><span>Secure gateway</span></button>
+</div>
+<div class="payment-action"><div><span>Booking amount</span><strong id="paymentAmount">₹0</strong></div><button id="payNowBtn" class="book-submit" type="button">Pay Securely →</button></div>
+<div class="upi-box"><span>Direct UPI</span><strong>ganeshk1234567amble-2@oksbi</strong></div>
+<p class="payment-note">UPI QR and direct UPI can be used now. Card and Net Banking open through the secure payment gateway once your gateway account is connected.</p>
+</div>
+<div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=upi%3A%2F%2Fpay%3Fpa%3Dganeshk1234567amble-2%40oksbi%26pn%3DWeekend%2520Trips%2520Pune" alt="Weekend Trips Pune UPI payment QR code" width="260" height="260"><p>Scan with Google Pay, PhonePe, Paytm or another UPI app</p></div>
 </div>
 </section>
 <section class="why"><div><p class="eyebrow">WHY US</p><h2>Just bring your<br>good vibes.</h2></div><div class="features"><div><b>01</b><h3>Affordable</h3><p>Great destinations without stretching your budget.</p></div><div><b>02</b><h3>Easy booking</h3><p>Submit your details and continue on WhatsApp.</p></div><div><b>03</b><h3>Weekend ready</h3><p>Perfect escapes for friends, couples and groups.</p></div></div></section>
