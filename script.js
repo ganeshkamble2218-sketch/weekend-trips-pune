@@ -37,6 +37,7 @@ const PICKUP_POINTS={
   ],
   'Matheran':['Pickup points will be announced on WhatsApp'],
   'Mahabaleshwar':[
+    'Noble Hospital — 05:35 AM (On Request)',
     'Sainath Nagar Chowk — 06:00 AM',
     'Kharadi - Chandan Nagar — 06:05 AM',
     'Viman Nagar — 06:05 AM',
@@ -48,8 +49,7 @@ const PICKUP_POINTS={
     'Dange Chowk — 07:00 AM',
     'Bhujbal Chowk — 07:15 AM',
     'Warje Chowk — 07:30 AM',
-    'Katraj Navale Bridge — 07:40 AM',
-    'Noble Hospital — 05:35 AM (On Request)'
+    'Katraj Navale Bridge — 07:40 AM'
   ]
 };
 function fillPickupSelect(id,trip){
