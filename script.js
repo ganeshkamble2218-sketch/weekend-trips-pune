@@ -5,7 +5,21 @@ form.addEventListener('submit',e=>{e.preventDefault();const name=document.getEle
 const SEAT_ROWS=[[1],[2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18,19]];
 const SEAT_PRICES={'Kaas Pathar':1499,'Kokan':1050,'Matheran':999,'Mahabaleshwar':1000};
 const PICKUP_POINTS={
-  'Kaas Pathar':['Pickup points will be announced on WhatsApp'],
+  'Kaas Pathar':[
+    'Noble Hospital — 04:45 AM',
+    'Sainath Nagar — 04:55 AM',
+    'Chandan Nagar — 05:05 AM',
+    'Viman Nagar — 05:15 AM',
+    'Yerwada — 05:20 AM',
+    'Jehangir Hospital — 05:30 AM',
+    'JM Road — 05:35 AM',
+    'Bremen Chowk — 05:45 AM',
+    'Jagtap Dairy — 05:50 AM',
+    'Dange Chowk — 06:55 AM',
+    'Bhujbal Chowk / Wakad — 06:00 AM',
+    'Warje — 06:20 AM',
+    'Navale Bridge — 06:50 AM'
+  ],
   'Kokan':[
     'Noble Hospital — Pickup time to be confirmed',
     'Sainath Nagar Chowk — 06:00 AM',
@@ -37,5 +51,6 @@ function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
 async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const r=await fetch(FLOOT_BOOKING_URL+'/_api/seats?trip='+encodeURIComponent(seatTrip.value)+'&date='+seatDate.value);if(!r.ok)throw new Error();const d=await r.json();bookedSeats=d.bookedSeats||[];selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar'); fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar'); drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
 seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{selectedSeats=[];loadBookedSeats();updateSeatTotal()});
+document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect('pickup',e.target.value.split(' — ')[0]);});
 const seatBookBtn=document.getElementById('seatBookBtn');seatBookBtn?.addEventListener('click',async()=>{const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name and mobile number.';return;}seatBookBtn.disabled=true;seatStatus.textContent='Booking seats…';try{const r=await fetch(FLOOT_BOOKING_URL+'/_api/book-seats',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trip,date,seats:selectedSeats,name,phone,pickup,totalAmount:total})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Some seats were just booked by another customer.');bookedSeats=[...bookedSeats,...d.bookedSeats];const seats=d.bookedSeats.join(', ');seatStatus.textContent='Booked successfully — Seat(s) '+seats+'. Total ₹'+total.toLocaleString('en-IN');drawSeats();selectedSeats=[];updateSeatTotal();const msg='Hello Weekend Trips Pune!%0A%0A*Confirmed Seat Booking*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ADate: '+date+'%0ASeat(s): '+encodeURIComponent(seats)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ATotal: ₹'+total;window.open('https://wa.me/918983416827?text='+msg,'_blank');}catch(e){seatStatus.textContent=e.message;await loadBookedSeats();}finally{seatBookBtn.disabled=false;}});
 drawSeats();updateSeatTotal();
