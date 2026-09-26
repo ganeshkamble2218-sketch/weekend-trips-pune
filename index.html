@@ -1,61 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="Weekend Trips Pune — affordable weekend getaways to Kaas Pathar, Kokan, Matheran and Mahabaleshwar.">
-<title>Weekend Trips Pune | Explore. Escape. Repeat.</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<nav><div class="logo">Weekend<span>Trips</span> Pune</div><a class="navbook" href="#booking">Book Now</a></nav>
-<header class="hero">
-<div class="hero-inner">
-<p class="eyebrow">WEEKEND GETAWAYS FROM PUNE</p>
-<h1>Escape the routine.<br><span>Chase the weekend.</span></h1>
-<p class="lead">Beautiful places. Affordable trips. Memories you'll talk about long after you return.</p>
-<a class="primary" href="#trips">Explore Trips ↓</a>
-<a class="secondary" href="#booking">Reserve Your Seat</a>
-</div>
-</header>
-<main>
-<section id="trips" class="section">
-<p class="eyebrow">OUR TRIPS</p><h2>Pick your next escape</h2>
-<div class="grid">
-<article class="trip"><div class="photo kaas"><span>🌸</span></div><div class="tripbody"><p class="tag">NATURE</p><h3>Kaas Pathar</h3><p>Experience the famous valley of flowers and breathtaking landscapes.</p><div class="row"><strong>₹1499</strong><a href="#booking" data-trip="Kaas Pathar">Book Trip →</a></div></div></article>
-<article class="trip"><div class="photo kokan"><span>🌊</span></div><div class="tripbody"><p class="tag">BEACH</p><h3>Kokan</h3><p>Sun, sea, greenery and the perfect weekend escape with friends.</p><div class="row"><strong>₹1050</strong><a href="#booking" data-trip="Kokan">Book Trip →</a></div></div></article>
-<article class="trip"><div class="photo matheran"><span>🏔️</span></div><div class="tripbody"><p class="tag">HILLS</p><h3>Matheran</h3><p>A refreshing hill-station getaway away from the noise of the city.</p><div class="row"><strong>₹999</strong><a href="#booking" data-trip="Matheran">Book Trip →</a></div></div></article>
-<article class="trip"><div class="photo maha"><span>🌄</span></div><div class="tripbody"><p class="tag">MOUNTAINS</p><h3>Mahabaleshwar</h3><p>Cool weather, scenic viewpoints and a memorable mountain escape.</p><div class="row"><strong>₹1000</strong><a href="#booking" data-trip="Mahabaleshwar">Book Trip →</a></div></div></article>
-</div>
-</section>
-<section id="booking" class="booking">
-<div class="booking-card">
-<p class="eyebrow">BOOK YOUR TRIP</p>
-<h2>Reserve your seat</h2>
-<p class="booking-intro">Fill in your details and your booking request will open directly in WhatsApp.</p>
-<form id="bookingForm">
-<div class="form-grid">
-<label>Full Name<input id="name" type="text" placeholder="Enter your name" required></label>
-<label>Mobile Number<input id="phone" type="tel" placeholder="Enter mobile number" inputmode="numeric" required></label>
-<label>Choose Trip<select id="trip" required><option value="">Select a trip</option><option>Kaas Pathar — ₹1499</option><option>Kokan — ₹1050</option><option>Matheran — ₹999</option><option>Mahabaleshwar — ₹1000</option></select></label>
-<label>Number of Seats<select id="seats" required><option value="1">1 Seat</option><option value="2">2 Seats</option><option value="3">3 Seats</option><option value="4">4 Seats</option><option value="5">5 Seats</option><option value="6">6 Seats</option><option value="7">7 Seats</option><option value="8">8 Seats</option><option value="9">9 Seats</option><option value="10">10 Seats</option></select></label>
-<label>Travel Date<input id="date" type="date" required></label>
-<label>Special Request<input id="request" type="text" placeholder="Optional"></label>
-</div>
-<button class="book-submit" type="submit">Confirm Booking on WhatsApp →</button>
-<p class="secure-note">✓ Your details are sent to 8983416827 on WhatsApp</p>
-</form>
-</div>
-</section>
-<section id="payment" class="payment">
-<div class="payment-card">
-<div class="payment-copy"><p class="eyebrow">SECURE YOUR SEAT</p><h2>Make your payment</h2><p>Pay your selected trip amount using any UPI app by scanning the QR code.</p><div class="upi-box"><span>UPI ID</span><strong>ganeshk1234567amble-2@oksbi</strong></div><p class="payment-note">After payment, tap the button below and send your payment confirmation on WhatsApp.</p><a class="book-submit payment-wa" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune%2C%20I%20have%20made%20the%20trip%20payment.%20Please%20confirm%20my%20booking." target="_blank">I Have Paid — Send Confirmation →</a></div>
-<div class="qr-box"><img src="qr.png" alt="Weekend Trips Pune UPI payment QR code"><p>Scan to pay with any UPI app</p></div>
-</div>
-</section>
-<section class="why"><div><p class="eyebrow">WHY US</p><h2>Just bring your<br>good vibes.</h2></div><div class="features"><div><b>01</b><h3>Affordable</h3><p>Great destinations without stretching your budget.</p></div><div><b>02</b><h3>Easy booking</h3><p>Submit your details and continue on WhatsApp.</p></div><div><b>03</b><h3>Weekend ready</h3><p>Perfect escapes for friends, couples and groups.</p></div></div></section>
-<section class="cta"><p class="eyebrow">READY?</p><h2>Your next memory<br>starts here.</h2><a class="primary" href="#booking">Book My Trip</a></section>
-</main>
-<footer><div class="logo">Weekend<span>Trips</span> Pune</div><p>WhatsApp: 8983416827</p><a href="https://instagram.com/ganeshkamble._22">Instagram @ganeshkamble._22</a><small>© 2026 Weekend Trips Pune</small></footer>
-<script src="script.js"></script>
-</body></html>
+*** Begin Patch
+*** Update File: index.html
+@@
+ <section id="booking" class="booking">
+ <div class="booking-card">
+ <p class="eyebrow">BOOK YOUR TRIP</p>
+ <h2>Reserve your seat</h2>
+-<p class="booking-intro">Fill in your details and your booking request will open directly in WhatsApp.</p>
++<p class="booking-intro">Choose your trip and date, then select your seats. Booked seats are blocked automatically.</p>
++<div class="seat-booking">
++<div class="seat-toolbar">
++<label>Choose Trip<select id="tripSeat"><option value="Kaas Pathar">Kaas Pathar — ₹1499</option><option value="Kokan">Kokan — ₹1050</option><option value="Matheran">Matheran — ₹999</option><option value="Mahabaleshwar">Mahabaleshwar — ₹1000</option></select></label>
++<label>Travel Date<input id="seatDate" type="date" required></label>
++</div>
++<div class="seat-legend"><span><i class="available"></i>Available</span><span><i class="chosen"></i>Selected</span><span><i class="blocked"></i>Booked</span></div>
++<div class="bus-board">
++<p class="admin-note">Your seats can be changed by admin</p>
++<div class="bus-front"><div>20</div><div>Driver</div></div>
++<div id="seatMap" class="seat-map"></div>
++<div class="bus-count">Bus 1 of 1</div>
++</div>
++<div class="seat-customer">
++<label>Full Name<input id="seatName" type="text" placeholder="Enter your name"></label>
++<label>Mobile Number<input id="seatPhone" type="tel" placeholder="Enter mobile number" inputmode="numeric"></label>
++<div class="seat-total">Total <strong id="seatTotal">₹0</strong></div>
++<button id="seatBookBtn" class="book-submit" type="button">Confirm Seat Booking →</button>
++</div>
++<p id="seatStatus" class="secure-note"></p>
++</div>
++<p class="old-booking-note">Prefer WhatsApp booking? Use the form below.</p>
+ <form id="bookingForm">
+*** End Patch
