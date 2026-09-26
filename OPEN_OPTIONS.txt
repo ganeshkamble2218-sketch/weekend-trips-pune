@@ -1,0 +1,16 @@
+WEEKEND TRIPS PUNE
+
+1. Customer Website:
+   PREVIEW.html
+
+2. Separate Admin Login:
+   ADMIN_LOGIN.html
+
+Preview admin credentials:
+Username: admin
+Password: admin123
+
+3. Admin Dashboard Preview:
+   ADMIN_DASHBOARD_PREVIEW.html
+
+The real production admin authentication and payment-confirmation system requires the Node.js backend to be hosted.

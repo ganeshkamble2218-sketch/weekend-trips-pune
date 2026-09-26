@@ -1,0 +1,8 @@
+{
+  "name": "weekend-trips-pune-booking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Weekend Trips Pune booking system with server-side Razorpay payment verification and admin dashboard",
+  "scripts": {"start": "node server.js"},
+  "engines": {"node": ">=18"}
+}

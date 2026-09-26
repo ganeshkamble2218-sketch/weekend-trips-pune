@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101828">
+<title>Weekend Trips Pune — Book Your Trip</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#182230;--muted:#667085;--line:#e4e7ec;--brand:#101828;--accent:#177245;--soft:#eef7f2;--danger:#b42318}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.container{max-width:1050px;margin:auto;padding:0 18px}
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.navin{height:68px;display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font-weight:900;font-size:20px}.logo span{color:var(--accent)}
+.navlinks{display:flex;gap:8px}.navlinks button,.ghost{background:transparent;border:0;padding:10px 12px;color:var(--ink)}
+.primary{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:12px 17px;font-weight:800}.green{background:var(--accent)}
+.hero{padding:48px 0 28px}.heroBox{border-radius:28px;padding:38px;background:linear-gradient(135deg,#101828,#174b3a);color:white;overflow:hidden;position:relative}
+.heroBox:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:-90px;top:-100px;background:rgba(255,255,255,.08)}
+.eyebrow{text-transform:uppercase;letter-spacing:1.5px;font-size:12px;font-weight:800;opacity:.8}.hero h1{font-size:clamp(34px,7vw,62px);line-height:1.02;margin:10px 0}.hero p{max-width:650px;font-size:17px;line-height:1.65;color:#d9e1ea}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.chip{padding:8px 11px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.08);font-size:13px}
+.section{padding:22px 0 44px}.section h2{font-size:28px;margin:0 0 7px}.sub{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.trip{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 8px 30px rgba(16,24,40,.06)}
+.triptop{height:190px;padding:20px;display:flex;align-items:flex-end;color:white;position:relative}.triptop:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,rgba(0,0,0,.55))}
+.triptop>*{position:relative;z-index:1}.kaas{background:linear-gradient(135deg,#48764d,#b6c95d)}.kokan{background:linear-gradient(135deg,#0b4f6c,#2bb3a3)}.mah{background:linear-gradient(135deg,#5b3a29,#d79b58)}.math{background:linear-gradient(135deg,#344b36,#8ca96a)}
+.triptop h3{margin:0;font-size:28px}.tripbody{padding:18px}.tripbody p{line-height:1.55;color:var(--muted);min-height:70px}.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px;margin-bottom:14px}
+.price{font-size:20px;font-weight:900}.actions{display:flex;gap:10px}.actions button{flex:1}
+
+.panel{display:none;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;margin:15px 0 30px}.panel.show{display:block}
+.steps{display:flex;gap:8px;overflow:auto;margin-bottom:18px}.step{padding:8px 12px;border-radius:999px;background:#f2f4f7;color:var(--muted);font-size:13px;white-space:nowrap}.step.on{background:#e7f2ec;color:#17633f;font-weight:800}
+label{display:block;font-size:13px;font-weight:800;margin:12px 0 6px}input,select{width:100%;border:1px solid #d0d5dd;border-radius:11px;padding:12px;background:white;outline:none}input:focus,select:focus{border-color:#667085}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.summary{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;line-height:1.8;margin:15px 0}
+.paygrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.payopt{border:1px solid var(--line);border-radius:13px;padding:13px;display:flex;gap:10px;align-items:flex-start}.payopt input{width:auto;margin-top:4px}.small{font-size:12px;color:var(--muted);line-height:1.5}
+
+.bookingHead{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.bookingHead h2{margin:0 0 5px}.close{background:#f2f4f7;border:0;border-radius:10px;padding:9px 12px}
+.note{text-align:center;color:var(--danger);font-weight:600;margin:8px 0 18px}
+.bus{background:#f3f4f6;border-radius:22px;padding:18px 12px 22px;max-width:700px;margin:0 auto}.busfront{display:grid;grid-template-columns:1fr 1fr;gap:70px;max-width:430px;margin:0 auto 28px}.box{height:88px;border-radius:16px;background:#d1d5db;display:flex;align-items:center;justify-content:center;color:#4b5563;font-size:19px}
+.seatrow{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:430px;margin:0 auto 23px}.seatrow.four{grid-template-columns:repeat(4,1fr);max-width:510px;gap:13px}
+.seatwrap{text-align:center;font-weight:700;font-size:16px}.seat{height:84px;background:#fff;border:1px solid #edf0f3;border-radius:15px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;margin-bottom:6px;color:#59636e;font-size:28px;transition:.15s}.seat.available:hover{border-color:#98a2b3}.seat.selected{border:2px solid #344054;background:#f9fafb}.seat.booked{background:#dfe2e6;color:#a3a9b1;box-shadow:none;cursor:not-allowed}.seatnum{font-size:16px;color:#111827}.buslegend{display:flex;justify-content:center;gap:18px;margin:18px 0 0;color:#667085;font-size:12px}.dot{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px;background:white;border:1px solid #ddd}.dot.gray{background:#dfe2e6}.dot.sel{background:#f9fafb;border:2px solid #344054}
+
+.totalbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:14px;margin-top:16px}.totalbar strong{font-size:22px}
+ .admin{background:#0b1220;color:#fff;border-radius:24px;padding:0;overflow:hidden;box-shadow:0 18px 55px rgba(16,24,40,.18)}
+.adminTop{padding:26px 26px 22px;background:linear-gradient(135deg,#0b1220,#123c31);display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.adminTop h2{margin:0 0 6px;font-size:30px}.adminTop p{margin:0;color:#b8c4d2}.adminTopActions{display:flex;gap:8px;flex-wrap:wrap}.adminTopActions button{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:10px 13px;font-weight:700}.adminBody{padding:22px 26px 28px;background:#f7f9fc;color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 4px 16px rgba(16,24,40,.04)}.kpiLabel{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.7px}.kpiValue{font-size:26px;font-weight:900;margin-top:7px}.kpiMeta{font-size:11px;color:var(--muted);margin-top:4px}
+.adminGrid{display:grid;grid-template-columns:1.05fr 1.95fr;gap:16px;align-items:start}.adminCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(16,24,40,.04)}.adminCard h3{margin:0 0 4px;font-size:17px}.adminCard .muted{color:var(--muted);font-size:12px}.adminCardHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.adminCardHead select{max-width:230px}.seatManage{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.seatManage button{border:1px solid #d0d5dd;border-radius:10px;padding:11px 5px;background:#fff;color:#182230;font-weight:800}.seatManage button.free{background:#ecfdf3;border-color:#abefc6;color:#067647}.seatManage button.blocked{background:#fef3f2;border-color:#fecdca;color:#b42318}.seatManage button.locked{background:#f2f4f7;color:#667085;border-color:#e4e7ec}
+.tripStats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.tripStat{border:1px solid var(--line);border-radius:13px;padding:12px}.tripStat strong{display:block;font-size:16px}.progress{height:7px;border-radius:999px;background:#eaecf0;overflow:hidden;margin-top:9px}.progress i{display:block;height:100%;background:#177245;border-radius:999px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{flex:1;min-width:180px}.toolbar select{width:auto;min-width:130px}.adminBtn{border:1px solid #d0d5dd;background:#fff;color:#182230;border-radius:10px;padding:10px 12px;font-weight:800}.adminBtn.green{background:#177245;color:#fff;border-color:#177245}.adminBtn.danger{color:#b42318;background:#fff}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:13px}.table{width:100%;border-collapse:collapse;font-size:12px;min-width:760px}.table th{background:#f8fafc;color:#667085;font-size:11px;text-transform:uppercase;letter-spacing:.4px}.table th,.table td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table tr:last-child td{border-bottom:0}.status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase}.status.confirmed{background:#ecfdf3;color:#067647}.status.pending{background:#fffaeb;color:#b54708}.status.failed,.status.expired{background:#fef3f2;color:#b42318}.status.other{background:#f2f4f7;color:#475467}.empty{color:var(--muted);padding:20px;text-align:center}.adminActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.admin button{font:inherit}.adminNote{font-size:11px;color:#667085;margin-top:9px}.admin .qrMini{width:110px;height:110px;object-fit:contain;border:1px solid var(--line);border-radius:12px;background:#fff}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.adminGrid{grid-template-columns:1fr}}
+
+footer{padding:35px 0;color:var(--muted);text-align:center;font-size:13px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 16px;border-radius:12px;display:none;z-index:100;box-shadow:0 10px 30px #0003}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.navlinks{display:none}.formgrid,.paygrid{grid-template-columns:1fr}.heroBox{padding:28px 22px}.triptop{height:165px}.busfront{gap:30px}.seatrow{gap:13px}.seatrow.four{gap:8px}.seat{height:75px}.bus{padding:14px 8px}.section{padding-bottom:25px}}
+</style>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+.seat.selected{outline:3px solid #101828;outline-offset:2px;transform:translateY(-2px)}
+.seat.available:hover{transform:translateY(-2px)}
+.select-seat-note{margin:10px 0 14px;padding:11px 13px;border-radius:12px;background:#f8fafc;border:1px solid #e4e7ec;color:#475467;font-size:13px}
+</style>
+
+<style>
+.admin-login-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:10px;text-decoration:none;background:#101828;color:#fff;font-weight:700;font-size:13px;margin-left:8px}
+.admin-login-btn:hover{opacity:.9}
+</style>
+
+<style id="admin-login-visible-style">
+.admin-login-visible{
+  display:flex!important;align-items:center;justify-content:center;
+  width:calc(100% - 28px);margin:12px 14px;padding:14px 18px;
+  border-radius:12px;background:#111827;color:#fff!important;
+  text-decoration:none!important;font-weight:800;font-size:15px;
+  box-shadow:0 5px 16px rgba(16,24,40,.18);box-sizing:border-box;
+}
+@media(min-width:700px){
+ .admin-login-visible{position:absolute;right:24px;top:18px;width:auto;margin:0;padding:11px 16px}
+}
+</style>
+</head>
+<body><a href="/admin" class="admin-login-btn">🔐 Admin Login</a>
+<nav class="nav"><div class="container navin">
+<div class="logo">Weekend <span>Trips</span> Pune</div>
+<div class="navlinks"><button onclick="go('trips')">Trips</button><button onclick="openAdmin()">Admin</button></div>
+<button class="primary" onclick="go('trips')">Book Now</button>
+</div></nav>
+
+<main>
+<section class="hero"><div class="container"><div class="heroBox">
+<div class="eyebrow">Weekend Trips Pune</div>
+<h1>Choose your escape.<br>Book your seat.</h1>
+<p>Four beautiful destinations, one simple booking experience. Select your trip, choose your seat and pay your advance online.</p>
+<div class="chips"><span class="chip">19-seat bus</span><span class="chip">Seat selection</span><span class="chip">Half / Full payment</span><span class="chip">WhatsApp confirmation</span></div>
+</div></div></section>
+
+<section class="section" id="trips"><div class="container">
+<h2>Upcoming Trips</h2><p class="sub">Pick a destination and reserve your seat.</p>
+<div class="grid">
+<article class="trip"><div class="triptop kaas"><h3>🌸 Kaas Pathar</h3></div><div class="tripbody"><div class="meta"><span>4 October</span><span class="price">₹1,499</span></div><p>Explore the famous Valley of Flowers with seasonal blooms, green hills and beautiful nature.</p><div class="actions"><button class="primary" onclick="startBooking('Kaas Pathar',1499)">Select Seats</button></div></div></article>
+<article class="trip"><div class="triptop kokan"><h3>🌊 Kokan</h3></div><div class="tripbody"><div class="meta"><span>4 October</span><span class="price">₹1,050</span></div><p>Enjoy beaches, greenery, coastal views and the relaxed Konkan vibe with friends.</p><div class="actions"><button class="primary" onclick="startBooking('Kokan',1050)">Select Seats</button></div></div></article>
+<article class="trip"><div class="triptop mah"><h3>🏔️ Mahabaleshwar</h3></div><div class="tripbody"><div class="meta"><span>4 October</span><span class="price">₹999</span></div><p>Spend a refreshing day around misty hills, viewpoints, greenery and the famous Mahabaleshwar atmosphere.</p><div class="actions"><button class="primary" onclick="startBooking('Mahabaleshwar',999)">Select Seats</button></div></div></article>
+<article class="trip"><div class="triptop math"><h3>🌿 Matheran</h3></div><div class="tripbody"><div class="meta"><span>4 October</span><span class="price">₹999</span></div><p>Escape into the peaceful hill station of Matheran with forest trails, viewpoints and fresh mountain air.</p><div class="actions"><button class="primary" onclick="startBooking('Matheran',999)">Select Seats</button></div></div></article>
+</div>
+</div></section>
+
+<section class="container">
+<div id="booking" class="panel">
+<div class="bookingHead"><div><h2 id="bookTitle">Book your trip</h2><div class="small">Choose one of the 19 seats below.</div></div><button class="close" onclick="closeBooking()">Close</button></div>
+<div class="steps"><span class="step on">1 Seat</span><span class="step">2 Details</span><span class="step">3 Payment</span><span class="step">4 Confirmation</span></div>
+<div class="note">Your seats can be changed by admin</div>
+<div class="bus">
+<div class="busfront"><div class="box">20</div><div class="box">Driver</div></div>
+<div id="seatRows"></div>
+<div class="buslegend"><span><i class="dot"></i>Available</span><span><i class="dot sel"></i>Selected</span><span><i class="dot gray"></i>Booked</span></div>
+</div>
+<div class="formgrid" style="margin-top:18px"><div><label>Full Name</label><input id="custName" placeholder="Enter full name"></div><div><label>Mobile Number</label><input id="custPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"></div></div>
+<div class="summary"><b>Trip:</b> <span id="sumTrip">-</span><br><b>Seat:</b> <span id="sumSeat">Select a seat</span><br><b>Trip price:</b> ₹<span id="sumPrice">0</span></div>
+<label>Payment option</label>
+<div class="paygrid">
+<label class="payopt"><input type="radio" name="pay" value="half" checked onchange="refreshTotal()"> <span><b>Half Payment</b><br><span class="small">Pay 50% advance now</span></span></label>
+<label class="payopt"><input type="radio" name="pay" value="full" onchange="refreshTotal()"> <span><b>Full Payment</b><br><span class="small">Pay the complete trip amount</span></span></label>
+</div>
+<div class="totalbar"><span>Pay now</span><strong>₹<span id="payNow">0</span></strong></div>
+<div class="actions" style="margin-top:14px"><button class="primary green" onclick="continuePayment()">Continue to Payment</button></div>
+<p class="small" style="margin-top:10px">Secure checkout: the seat is only confirmed after the server verifies the payment.</p>
+</div>
+
+<div id="payment" class="panel">
+<div class="bookingHead"><div><h2>Secure Payment</h2><div class="small">Booking <b id="bookingId"></b></div></div><button class="close" onclick="backBooking()">Back</button></div>
+<div class="summary"><b>Trip:</b> <span id="payTrip"></span><br><b>Seat:</b> <span id="paySeat"></span><br><b>Amount:</b> ₹<span id="payAmount"></span></div>
+<div style="background:#f8fafc;border:1px solid var(--line);border-radius:15px;padding:16px;text-align:center;margin-bottom:14px">
+  <b>UPI / QR Payment</b>
+  <img src="/payment-qr.png" alt="UPI QR code for Weekend Trips Pune" style="display:block;width:min(300px,82vw);height:auto;margin:14px auto;border-radius:10px;background:#fff">
+  <div style="font-weight:700;font-size:15px;margin-top:6px">UPI ID: ganeshk1234567amble-2@oksbi</div>
+  <div class="small" style="margin-top:8px">Scan this QR with any UPI app and pay the exact amount shown above.</div>
+</div>
+<div class="paygrid">
+<button class="primary green" onclick="resumePayment()">Open Secure Payment</button>
+<button class="primary" onclick="resumePayment()">Pay by Card / UPI / NetBanking</button>
+</div>
+<p class="small" style="margin-top:14px">For automatic payment confirmation, complete payment through the secure checkout. The static QR is shown for reference; QR payments outside checkout are not automatically matched to a booking.</p>
+</div>
+
+<div id="confirmation" class="panel">
+<h2>🎉 Booking created</h2>
+<p>Your booking has been recorded.</p>
+<div class="summary" id="confirmationText"></div>
+<div class="actions"><button class="primary green" onclick="whatsapp()">Send Confirmation on WhatsApp</button><button class="primary" onclick="closeBooking()">Done</button></div>
+</div>
+
+<div id="admin" class="panel">
+<div class="admin">
+  <div class="adminTop">
+    <div><div class="eyebrow">Weekend Trips Pune</div><h2>Admin Dashboard</h2><p>Monitor bookings, payments, seats and trip performance from one place.</p></div>
+    <div class="adminTopActions"><button onclick="refreshAdmin()">↻ Refresh</button><button onclick="logoutAdmin()">Logout</button></div>
+  </div>
+  <div class="adminBody">
+    <div class="kpis">
+      <div class="kpi"><div class="kpiLabel">Confirmed bookings</div><div class="kpiValue" id="kpiConfirmed">0</div><div class="kpiMeta">Paid and seat confirmed</div></div>
+      <div class="kpi"><div class="kpiLabel">Pending payments</div><div class="kpiValue" id="kpiPending">0</div><div class="kpiMeta">Seats temporarily held</div></div>
+      <div class="kpi"><div class="kpiLabel">Revenue collected</div><div class="kpiValue" id="kpiRevenue">₹0</div><div class="kpiMeta">Confirmed payments</div></div>
+      <div class="kpi"><div class="kpiLabel">Seats occupied</div><div class="kpiValue" id="kpiSeats">0 / 76</div><div class="kpiMeta">Across all 4 trips</div></div>
+    </div>
+
+    <div class="adminGrid">
+      <div>
+        <div class="adminCard">
+          <div class="adminCardHead"><div><h3>Seat management</h3><div class="muted">Block or unblock seats manually.</div></div><select id="adminTrip" onchange="renderAdminSeats()"></select></div>
+          <div id="adminSeats" class="seatManage"></div>
+          <div class="adminNote">Green = available • Red = manually blocked • Grey = already booked/held</div>
+        </div>
+        <div class="adminCard" style="margin-top:16px">
+          <div class="adminCardHead"><div><h3>Trip performance</h3><div class="muted">Confirmed seats and collected payments.</div></div></div>
+          <div id="tripStats" class="tripStats"></div>
+        </div>
+        <div class="adminCard" style="margin-top:16px">
+          <div class="adminCardHead"><div><h3>Payment setup</h3><div class="muted">Current merchant details used by the customer payment screen.</div></div><img class="qrMini" src="/payment-qr.png" alt="Merchant QR"></div>
+          <label style="color:#182230">Merchant UPI ID</label>
+          <input id="merchantUpiAdmin" value="ganeshk1234567amble-2@oksbi" readonly>
+          <div class="adminNote">UPI payments outside the secure checkout are not automatically matched to bookings. Verified gateway payments confirm seats.</div>
+        </div>
+      </div>
+
+      <div class="adminCard">
+        <div class="adminCardHead"><div><h3>Bookings & payments</h3><div class="muted">Search, filter and export customer bookings.</div></div><button class="adminBtn green" onclick="exportBookings()">Export CSV</button></div>
+        <div class="toolbar"><input id="bookingSearch" placeholder="Search booking, customer, phone, trip or payment ID" oninput="renderAdminTable()"><select id="bookingStatus" onchange="renderAdminTable()"><option value="all">All statuses</option><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="failed">Failed</option><option value="expired">Expired</option></select></div>
+        <div id="adminBookings" class="tableWrap"></div>
+      </div>
+    </div>
+
+    <div class="adminActions"><button class="adminBtn danger" onclick="clearBookings()">Clear booking records</button><button class="adminBtn" onclick="closeAdmin()">Close Dashboard</button></div>
+  </div>
+</div>
+</div>
+</section>
+</main>
+<footer>Weekend Trips Pune • Travel • Explore • Create Memories</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const trips=[
+ {name:'Kaas Pathar',price:1499},{name:'Kokan',price:1050},{name:'Mahabaleshwar',price:999},{name:'Matheran',price:999}
+];
+let state={trip:null,price:0,seat:null,bookingId:null,orderId:null,paymentAmount:0};
+function show(id){document.getElementById(id).classList.add('show')}
+function hide(id){document.getElementById(id).classList.remove('show')}
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.style.display='block';setTimeout(()=>x.style.display='none',2600)}
+async function api(url,opts={}){const r=await fetch(url,{headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});let d={};try{d=await r.json()}catch{};if(!r.ok)throw new Error(d.error||'Request failed');return d}
+function startBooking(name,price){state={trip:name,price,seat:null,bookingId:null,orderId:null,paymentAmount:0};document.getElementById('bookTitle').textContent='Book '+name;document.getElementById('sumTrip').textContent=name;document.getElementById('sumPrice').textContent=price.toLocaleString('en-IN');renderSeats();refreshTotal();hide('payment');hide('confirmation');show('booking');document.getElementById('booking').scrollIntoView({behavior:'smooth',block:'start'})}
+function closeBooking(){hide('booking');hide('payment');hide('confirmation');go('trips')}
+async function renderSeats(){const holder=document.getElementById('seatRows');holder.innerHTML='';let data;try{data=await api('/api/seats?trip='+encodeURIComponent(state.trip))}catch(e){toast(e.message);return}const booked=new Set(data.unavailable||[]);const rows=[[1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18,19]];rows.forEach(row=>{const r=document.createElement('div');r.className='seatrow'+(row.length===4?' four':'');row.forEach(n=>{const w=document.createElement('div');w.className='seatwrap';const b=document.createElement('div');b.className='seat '+(booked.has(n)?'booked':'available')+(state.seat===n?' selected':'');b.innerHTML='♙';b.title=booked.has(n)?'Unavailable':'Select seat '+n;if(!booked.has(n))b.onclick=()=>selectSeat(n);const num=document.createElement('div');num.className='seatnum';num.textContent=n;w.appendChild(b);w.appendChild(num);r.appendChild(w)});holder.appendChild(r)})}
+function selectSeat(n){state.seat=n;document.getElementById('sumSeat').textContent='Seat '+n;renderSeats();refreshTotal()}
+function refreshTotal(){const half=document.querySelector('input[name=pay]:checked').value==='half';document.getElementById('payNow').textContent=Math.ceil(state.price*(half?.5:1)).toLocaleString('en-IN')}
+async function continuePayment(){const name=document.getElementById('custName').value.trim(),phone=document.getElementById('custPhone').value.trim();if(!state.seat)return toast('Please select a seat');if(name.length<2)return toast('Enter your full name');if(!/^\d{10}$/.test(phone))return toast('Enter a valid 10-digit mobile number');const half=document.querySelector('input[name=pay]:checked').value==='half';const amount=Math.ceil(state.price*(half?.5:1));try{const d=await api('/api/bookings/create',{method:'POST',body:JSON.stringify({trip:state.trip,seat:state.seat,name,phone,paymentType:half?'half':'full',amount})});state.bookingId=d.booking.id;state.orderId=d.order.id;state.paymentAmount=amount;window._keyId=d.keyId;document.getElementById('bookingId').textContent=state.bookingId;document.getElementById('payTrip').textContent=state.trip;document.getElementById('paySeat').textContent='Seat '+state.seat;document.getElementById('payAmount').textContent=amount.toLocaleString('en-IN');hide('booking');show('payment');document.getElementById('payment').scrollIntoView({behavior:'smooth',block:'start'});openRazorpay(d)}catch(e){toast(e.message);renderSeats()}}
+function resumePayment(){ if(!state.orderId){toast('Start the payment again from the booking form.');return} openRazorpay({keyId:window._keyId,booking:{id:state.bookingId,trip:state.trip,seat:state.seat,name:document.getElementById('custName').value.trim(),phone:document.getElementById('custPhone').value.trim()},order:{id:state.orderId,amount:state.paymentAmount*100,currency:'INR'}}) }
+function openRazorpay(d){if(!window.Razorpay){toast('Payment checkout could not load. Please try again.');return}const options={key:d.keyId,amount:d.order.amount,currency:d.order.currency,name:'Weekend Trips Pune',description:d.booking.trip+' • Seat '+d.booking.seat,order_id:d.order.id,prefill:{name:d.booking.name,contact:d.booking.phone},theme:{color:'#101828'},handler:async function(resp){try{const v=await api('/api/payments/verify',{method:'POST',body:JSON.stringify({bookingId:d.booking.id,razorpay_order_id:resp.razorpay_order_id,razorpay_payment_id:resp.razorpay_payment_id,razorpay_signature:resp.razorpay_signature})});if(v.confirmed)showConfirmation(v.booking);else toast('Payment received; waiting for confirmation.');}catch(e){toast('Payment was received but confirmation is still being checked. '+e.message);pollBooking(d.booking.id)}},modal:{ondismiss:function(){toast('Payment window closed. Your seat is held temporarily until payment expires.')}}};new Razorpay(options).open()}
+async function pollBooking(id){for(let i=0;i<12;i++){await new Promise(r=>setTimeout(r,2500));try{const d=await api('/api/bookings/'+encodeURIComponent(id));if(d.booking.status==='confirmed'){showConfirmation(d.booking);return}if(['failed','expired'].includes(d.booking.status)){toast('Payment was not confirmed; seat released.');hide('payment');show('booking');renderSeats();return}}catch{}}}
+function showConfirmation(b){state.bookingId=b.id;document.getElementById('confirmationText').innerHTML='<b>Booking ID:</b> '+b.id+'<br><b>Trip:</b> '+b.trip+'<br><b>Seat:</b> '+b.seat+'<br><b>Customer:</b> '+b.name+'<br><b>Payment:</b> ₹'+Number(b.amount).toLocaleString('en-IN')+'<br><b>Status:</b> <span style="color:#17633f;font-weight:800">CONFIRMED</span>';hide('payment');hide('booking');show('confirmation');renderSeats()}
+function whatsapp(){const txt=encodeURIComponent('Booking '+state.bookingId+'\nTrip: '+state.trip+'\nSeat: '+state.seat+'\nName: '+document.getElementById('custName').value+'\nPayment: Confirmed');window.open('https://wa.me/?text='+txt,'_blank')}
+function backBooking(){hide('payment');show('booking');renderSeats()}
+async function openAdmin(){const u=prompt('Admin username');if(u===null)return;const p=prompt('Admin password');if(p===null)return;try{await api('/api/admin/login',{method:'POST',body:JSON.stringify({username:u,password:p})});document.getElementById('adminTrip').innerHTML=trips.map(x=>'<option>'+x.name+'</option>').join('');await refreshAdmin();show('admin');document.getElementById('admin').scrollIntoView({behavior:'smooth'})}catch(e){toast('Invalid admin login')}}
+function closeAdmin(){hide('admin')}
+async function refreshAdmin(){await renderAdmin();await renderAdminSeats()}
+async function renderAdminSeats(){const t=document.getElementById('adminTrip').value||trips[0].name;const data=await api('/api/seats?trip='+encodeURIComponent(t));const box=document.getElementById('adminSeats');box.innerHTML='';const unavailable=new Set(data.unavailable||[]);const bookings=adminBookingsCache||[];for(let n=1;n<=19;n++){const booked=bookings.some(x=>x.trip===t&&Number(x.seat)===n&&['confirmed','pending'].includes(x.status));let b=document.createElement('button');b.textContent='Seat '+n;b.className=booked?'locked':(unavailable.has(n)?'blocked':'free');b.title=booked?'Booked or temporarily held':'Click to block/unblock';b.onclick=()=>{if(booked)return;toggleAdminSeat(t,n)};box.appendChild(b)}}
+async function toggleAdminSeat(t,n){try{await api('/api/admin/seats/toggle',{method:'POST',body:JSON.stringify({trip:t,seat:n})});await refreshAdmin()}catch(e){toast(e.message)}}
+let adminBookingsCache=[];
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function statusBadge(s){const cls=['confirmed','pending','failed','expired'].includes(s)?s:'other';return '<span class="status '+cls+'">'+esc(s)+'</span>'}
+async function renderAdmin(){const d=await api('/api/admin/bookings');adminBookingsCache=d.bookings||[];const b=adminBookingsCache;const confirmed=b.filter(x=>x.status==='confirmed');const pending=b.filter(x=>x.status==='pending');const revenue=confirmed.reduce((a,x)=>a+Number(x.amount||0),0);document.getElementById('kpiConfirmed').textContent=confirmed.length;document.getElementById('kpiPending').textContent=pending.length;document.getElementById('kpiRevenue').textContent='₹'+revenue.toLocaleString('en-IN');document.getElementById('kpiSeats').textContent=confirmed.length+' / 76';
+const stats=trips.map(t=>{const rows=confirmed.filter(x=>x.trip===t.name);const rev=rows.reduce((a,x)=>a+Number(x.amount||0),0);const pct=Math.round(rows.length/19*100);return '<div class="tripStat"><strong>'+esc(t.name)+'</strong><div class="muted">'+rows.length+' / 19 seats • ₹'+rev.toLocaleString('en-IN')+'</div><div class="progress"><i style="width:'+Math.min(100,pct)+'%"></i></div></div>'}).join('');document.getElementById('tripStats').innerHTML=stats;renderAdminTable();}
+function renderAdminTable(){const el=document.getElementById('adminBookings');if(!el)return;const q=(document.getElementById('bookingSearch')?.value||'').toLowerCase().trim();const st=document.getElementById('bookingStatus')?.value||'all';let rows=adminBookingsCache.slice().reverse().filter(x=>st==='all'||x.status===st).filter(x=>!q||[x.id,x.trip,x.name,x.phone,x.paymentId,x.orderId].some(v=>String(v||'').toLowerCase().includes(q)));if(!rows.length){el.innerHTML='<div class="empty">No matching bookings found.</div>';return}el.innerHTML='<table class="table"><thead><tr><th>Booking</th><th>Customer</th><th>Trip</th><th>Seat</th><th>Amount</th><th>Status</th><th>Payment ID</th><th>Created</th></tr></thead><tbody>'+rows.map(x=>'<tr><td><b>'+esc(x.id)+'</b></td><td>'+esc(x.name)+'<br><span class="muted">'+esc(x.phone)+'</span></td><td>'+esc(x.trip)+'</td><td><b>'+esc(x.seat)+'</b></td><td>₹'+Number(x.amount||0).toLocaleString('en-IN')+'</td><td>'+statusBadge(x.status)+'</td><td>'+esc(x.paymentId||'-')+'</td><td>'+new Date(x.createdAt).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+'</td></tr>').join('')+'</tbody></table>'}
+function exportBookings(){if(!adminBookingsCache.length)return toast('No bookings to export');const head=['Booking ID','Trip','Seat','Customer','Phone','Amount','Payment Type','Status','Payment ID','Order ID','Created At'];const lines=[head,...adminBookingsCache.map(x=>[x.id,x.trip,x.seat,x.name,x.phone,x.amount,x.paymentType,x.status,x.paymentId||'',x.orderId||'',x.createdAt])].map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(','));const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='weekend-trips-pune-bookings.csv';a.click();URL.revokeObjectURL(a.href)}
+async function clearBookings(){if(!confirm('This will delete booking records and release their holds. Continue?'))return;try{await api('/api/admin/bookings/clear',{method:'POST'});await refreshAdmin();toast('Booking records cleared')}catch(e){toast(e.message)}}
+
+</script>
+</body>
+</html>

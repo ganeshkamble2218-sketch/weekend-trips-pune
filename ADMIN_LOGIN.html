@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Weekend Trips Pune — Admin Login</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f2f4f7;font-family:Arial,sans-serif;color:#101828}
+.card{width:min(420px,92vw);background:#fff;border:1px solid #eaecf0;border-radius:20px;padding:28px;box-shadow:0 15px 40px rgba(16,24,40,.10)}
+.logo{font-size:28px;font-weight:900;margin-bottom:6px}.sub{color:#667085;margin-bottom:24px}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
+input{width:100%;padding:14px;border:1px solid #d0d5dd;border-radius:10px;font-size:16px}
+button{width:100%;margin-top:20px;padding:14px;border:0;border-radius:10px;background:#111827;color:#fff;font-size:16px;font-weight:800}
+.back{display:block;text-align:center;margin-top:18px;color:#344054;text-decoration:none;font-size:14px}
+.err{display:none;margin-top:14px;padding:10px;border-radius:9px;background:#fef3f2;color:#b42318;font-size:13px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Weekend Trips Pune</div>
+  <div class="sub">🔐 Admin Dashboard Login</div>
+  <label>Username</label>
+  <input id="u" autocomplete="username" placeholder="Enter username">
+  <label>Password</label>
+  <input id="p" type="password" autocomplete="current-password" placeholder="Enter password">
+  <button onclick="login()">Login to Admin Dashboard</button>
+  <div id="err" class="err">Incorrect username or password.</div>
+  <a class="back" href="PREVIEW.html">← Back to Customer Website</a>
+</div>
+<script>
+function login(){
+  const u=document.getElementById('u').value.trim();
+  const p=document.getElementById('p').value;
+  if(u==='admin' && p==='admin123'){
+    // Standalone preview login. Real production authentication is handled by the server.
+    window.location.href='ADMIN_DASHBOARD_PREVIEW.html';
+  }else{
+    document.getElementById('err').style.display='block';
+  }
+}
+</script>
+</body>
+</html>
