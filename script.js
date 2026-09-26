@@ -36,7 +36,21 @@ const PICKUP_POINTS={
     'Ghotawade Phata — 07:45 AM'
   ],
   'Matheran':['Pickup points will be announced on WhatsApp'],
-  'Mahabaleshwar':['Pickup points will be announced on WhatsApp']
+  'Mahabaleshwar':[
+    'Sainath Nagar Chowk — 06:00 AM',
+    'Kharadi - Chandan Nagar — 06:05 AM',
+    'Viman Nagar — 06:05 AM',
+    'Yerwada — 06:15 AM',
+    'Jehangir Hospital — 06:20 AM',
+    'JM Road Kalaniketan — 06:30 AM',
+    'Aundh Brehman Chowk — 06:40 AM',
+    'Jagtap Dairy — 06:50 AM',
+    'Dange Chowk — 07:00 AM',
+    'Bhujbal Chowk — 07:15 AM',
+    'Warje Chowk — 07:30 AM',
+    'Katraj Navale Bridge — 07:40 AM',
+    'Noble Hospital — 05:35 AM (On Request)'
+  ]
 };
 function fillPickupSelect(id,trip){
   const el=document.getElementById(id); if(!el)return;
