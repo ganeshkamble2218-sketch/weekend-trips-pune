@@ -15,8 +15,8 @@ const PICKUP_POINTS={
     'JM Road — 05:35 AM',
     'Bremen Chowk — 05:45 AM',
     'Jagtap Dairy — 05:50 AM',
-    'Dange Chowk — 06:55 AM',
-    'Bhujbal Chowk / Wakad — 06:00 AM',
+    'Dange Chowk — 06:00 AM',
+    'Bhujbal Chowk / Wakad — 06:55 AM',
     'Warje — 06:20 AM',
     'Navale Bridge — 06:50 AM'
   ],
