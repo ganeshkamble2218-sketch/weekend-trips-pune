@@ -43,3 +43,24 @@ footer{background:#0c1410!important}.floating-whatsapp,.floating-call{box-shadow
 @media(max-width:700px){nav{padding:14px 5%!important}.hero{min-height:640px}.hero h1{font-size:48px;letter-spacing:-2px}.hero p{font-size:16px}.trip-card,.package-card{border-radius:20px}.process,.booking,.cta{padding:72px 5%}.trust-strip{padding:30px 5%}.navlinks{gap:10px}.navlinks>a{font-size:11px}.navbook{padding:10px 12px!important}}
 
 .seat-booking[hidden]{display:none!important}.seat-booking{position:relative}.seat-close{position:absolute;right:18px;top:14px;width:38px;height:38px;border:0;border-radius:50%;background:#f1f3ed;color:#142019;font-size:26px;line-height:1;cursor:pointer;z-index:2}.selected-trip-title{display:flex;align-items:center;gap:12px;margin:4px 0 18px;padding:14px 18px;border-radius:14px;background:#f3f5e8;border:1px solid #e0e5c8}.selected-trip-title span{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#66736a}.selected-trip-title strong{font-size:18px;color:#142019}.seat-booking.open{animation:seatReveal .35s ease both}@keyframes seatReveal{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Premium payment upgrade */
+.payment-full{position:relative;overflow:hidden}
+.payment-full:before{content:"SECURE WEEKEND BOOKING";display:inline-block;grid-column:1/-1;font-size:11px;font-weight:800;letter-spacing:.14em;color:#6f7f28;background:#f0f3df;border:1px solid #dce4b4;border-radius:999px;padding:8px 12px;width:max-content}
+.payment-breakup{display:grid;gap:8px;background:linear-gradient(135deg,#f8f9f3,#eef1e4);border:1px solid #e0e5d2;border-radius:18px;padding:18px;margin:18px 0}
+.payment-breakup div{display:flex;justify-content:space-between;align-items:center;color:#5f685f;font-size:14px}
+.payment-breakup div:last-child{border-top:1px solid #d9dfcc;margin-top:7px;padding-top:13px;color:#17241c;font-size:17px}
+.payment-breakup div:last-child strong{font-size:24px}
+.payment-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.payment-choice label{cursor:pointer;border:1.5px solid #dfe3d9;background:#fff;border-radius:17px;padding:16px;display:grid;gap:7px;transition:.2s;box-shadow:0 5px 18px rgba(20,32,25,.05)}
+.payment-choice label:has(input:checked){border-color:#9eae32;background:#f4f6e8;box-shadow:0 0 0 3px #dce59c55}
+.payment-choice input{accent-color:#87972a}
+.payment-choice strong{font-size:14px}
+.payment-choice span{font-size:20px;font-weight:800;color:#17241c}
+.payment-action{border:1px solid #dce2d3!important;background:#18261e!important;color:#fff!important;border-radius:18px!important;padding:17px!important}
+.payment-action span{color:#bfc9bd!important}
+.payment-action strong{color:#fff!important}
+.payment-action .book-submit{background:#dbe85b;color:#17241c;border:0;border-radius:13px;font-weight:800;min-height:52px}
+.payment-methods{grid-template-columns:repeat(3,1fr)!important}
+.pay-method{min-height:72px!important}
+@media(max-width:700px){.payment-choice{grid-template-columns:1fr}.payment-methods{grid-template-columns:1fr!important}.payment-full:before{grid-column:auto}}
