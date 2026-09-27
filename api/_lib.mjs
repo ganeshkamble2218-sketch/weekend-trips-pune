@@ -110,10 +110,15 @@ export async function razorpay(path, { method = 'GET', body } = {}) {
 }
 
 export async function reserveSeats(trip, date, seats, token) {
-  const commands = ['MSETEX', seats.length];
-  for (const seat of seats) commands.push(lockKey(trip, date, seat), token);
-  commands.push('NX', 'EX', LOCK_SECONDS);
-  return redis(commands);
+  const keys = seats.map(seat => lockKey(trip, date, seat));
+  const script = "for i,key in ipairs(KEYS) do if redis.call('EXISTS',key) == 1 then return 0 end end for i,key in ipairs(KEYS) do redis.call('SET',key,ARGV[1],'EX',ARGV[2]) end return 1";
+  return redis(['EVAL', script, String(keys.length), ...keys, token, String(LOCK_SECONDS)]);
+}
+
+export async function bookSeats(trip, date, seats, orderId) {
+  const keys = seats.map(seat => seatKey(trip, date, seat));
+  const script = "for i,key in ipairs(KEYS) do if redis.call('EXISTS',key) == 1 then return 0 end end for i,key in ipairs(KEYS) do redis.call('SET',key,ARGV[1],'EX',ARGV[2]) end return 1";
+  return redis(['EVAL', script, String(keys.length), ...keys, orderId, String(365 * 24 * 60 * 60)]);
 }
 
 export async function bookedAndLockedSeats(trip, date) {
