@@ -19,3 +19,5 @@
 
 
 .expectations{padding:78px 5%;background:#fff}.expectations-head{max-width:680px;margin-bottom:30px}.expectations-head h2{margin:8px 0 10px}.expectations-head>p:last-child{color:#666}.expectations-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;max-width:1150px}.expectation-card{padding:25px 22px;border:1px solid #e8e8e8;border-radius:18px;background:#fafafa}.expectation-card>span{font-size:30px}.expectation-card h3{margin:14px 0 8px}.expectation-card p{color:#666;line-height:1.55;margin:0}@media(max-width:900px){.expectations-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.expectations{padding:60px 5%}.expectations-grid{grid-template-columns:1fr}}
+
+.date-note{display:block;margin-top:6px;font-size:12px;color:#777}
