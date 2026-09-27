@@ -1,6 +1,6 @@
 import {
   bookingKey, hmacSha256, json, lockKey, options, razorpay,
-  redis, safeEqualHex, seatKey
+  redis, safeEqualHex, bookSeats
 } from './_lib.mjs';
 
 export async function POST(request) {
@@ -29,11 +29,7 @@ export async function POST(request) {
       return json({ error: 'Seat reservation expired or changed. Please contact us before making another payment.' }, 409);
     }
 
-    const bookedKeys = booking.seats.map(seat => seatKey(booking.trip, booking.date, seat));
-    const setCommand = ['MSETEX', bookedKeys.length];
-    for (const key of bookedKeys) setCommand.push(key, orderId);
-    setCommand.push('NX');
-    const booked = await redis(setCommand);
+    const booked = await bookSeats(booking.trip, booking.date, booking.seats, orderId);
     if (booked !== 1) return json({ error: 'A selected seat was already booked. Please contact us immediately for payment resolution.' }, 409);
 
     await redis([
