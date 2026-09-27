@@ -93,9 +93,10 @@ function startPayment(){
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
+ const transactionRef='WTP'+Date.now();
+ const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
  const upiUrl='upi://pay?'+params;
- const packages={gpay:'com.google.android.apps.walletnfcrel',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
+ const packages={gpay:'com.google.android.apps.nbu.paisa.user',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
  const pkg=packages[paymentMethod];
  if(pkg){
    const intentUrl='intent://pay?'+params+'#Intent;scheme=upi;package='+pkg+';end';
