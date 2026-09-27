@@ -3,7 +3,10 @@ import {
   redis, safeEqualHex, bookSeats
 } from './_lib.mjs';
 
-export async function POST(request) {
+export default async function handler(request) {
+  if (request.method === 'OPTIONS') return options();
+  if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+
   let body;
   try { body = await request.json(); } catch { return json({ error: 'Invalid request' }, 400); }
 
@@ -58,8 +61,4 @@ export async function POST(request) {
   } catch (e) {
     return json({ error: e.message || 'Could not verify payment' }, 500);
   }
-}
-
-export async function OPTIONS() {
-  return options();
 }
