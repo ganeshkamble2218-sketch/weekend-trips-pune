@@ -3,7 +3,7 @@ function populateWeekendDates(){
  const el=document.getElementById('seatDate'); if(!el)return;
  const today=new Date(); today.setHours(0,0,0,0);
  el.innerHTML='<option value="">Select Saturday or Sunday</option>';
- for(let i=0;i<60;i++){
+ for(let i=0;i<370;i++){
    const d=new Date(today); d.setDate(today.getDate()+i);
    if(d.getDay()===0||d.getDay()===6){
      const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
@@ -127,8 +127,31 @@ function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
 async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const q='https://kbistbtecmazmkhmgowq.supabase.co/rest/v1/seat_blocks?select=seat_number&trip=eq.'+encodeURIComponent(seatTrip.value)+'&travel_date=eq.'+seatDate.value;const r=await fetch(q,{headers:{apikey:'sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s',Authorization:'Bearer sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s'}});if(!r.ok)throw new Error();const blocked=await r.json();bookedSeats=blocked.map(x=>Number(x.seat_number));selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar');fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar');drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
 seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{if(seatDate.value&&!isWeekendDate(seatDate.value)){seatStatus.textContent='Please select a Saturday or Sunday.';seatDate.value='';selectedSeats=[];drawSeats();updateSeatTotal();return;}selectedSeats=[];loadBookedSeats();updateSeatTotal()});
-document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect('pickup',e.target.value.split(' — ')[0]);updatePickupAddress(e.target.value);});
+function updateOldPickupAddress(value){
+ const box=document.getElementById('pickupAddressOld'); if(!box)return;
+ if(!value){box.innerHTML='';return;}
+ const name=value.split(' — ')[0].replace(' (On Request)','');
+ const address=PICKUP_ADDRESSES[name]||name+', Pune, Maharashtra';
+ const mapUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address);
+ box.innerHTML='<strong>📍 Pickup point:</strong> '+address+'<br><a href="'+mapUrl+'" target="_blank" rel="noopener">Open in Google Maps →</a>';
+}
+function populateOldBookingDates(){
+ const el=document.getElementById('date'); if(!el)return;
+ const today=new Date(); today.setHours(0,0,0,0);
+ el.innerHTML='<option value="">Select Saturday or Sunday</option>';
+ for(let i=0;i<370;i++){
+  const d=new Date(today); d.setDate(today.getDate()+i);
+  if(d.getDay()===0||d.getDay()===6){
+   const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+   const label=(d.getDay()===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+   el.insertAdjacentHTML('beforeend','<option value="'+value+'">'+label+'</option>');
+  }
+ }
+}
+document.getElementById('trip')?.addEventListener('change',e=>{const trip=e.target.value.split(' — ')[0];fillPickupSelect('pickup',trip);updateOldPickupAddress('');});
+document.getElementById('pickup')?.addEventListener('change',e=>updateOldPickupAddress(e.target.value));
 document.getElementById('seatPickup')?.addEventListener('change',e=>updatePickupAddress(e.target.value));
+populateOldBookingDates();
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
 let paymentMethod='upi';
 function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
