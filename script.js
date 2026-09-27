@@ -99,6 +99,7 @@ async function startPayment(){
  window.open('https://wa.me/918983416827?text='+msg,'_blank');
  seatStatus.textContent='Payment request sent on WhatsApp. Online payment verification is currently disabled.';
 }
+document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
 drawSeats();updateSeatTotal();updatePaymentUI();
