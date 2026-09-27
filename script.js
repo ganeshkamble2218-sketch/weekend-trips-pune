@@ -1,4 +1,18 @@
 
+function populateWeekendDates(){
+ const el=document.getElementById('seatDate'); if(!el)return;
+ const today=new Date(); today.setHours(0,0,0,0);
+ el.innerHTML='<option value="">Select Saturday or Sunday</option>';
+ for(let i=0;i<60;i++){
+   const d=new Date(today); d.setDate(today.getDate()+i);
+   if(d.getDay()===0||d.getDay()===6){
+     const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+     const value=y+'-'+m+'-'+day;
+     const label=(d.getDay()===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+     el.insertAdjacentHTML('beforeend','<option value="'+value+'">'+label+'</option>');
+   }
+ }
+}
 function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');return d.getDay()===0||d.getDay()===6;}
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
 document.getElementById('closeSeatBooking')?.addEventListener('click',()=>{const box=document.getElementById('seatBooking');box.hidden=true;box.classList.remove('open');document.getElementById('trips')?.scrollIntoView({behavior:'smooth'});});
@@ -150,6 +164,6 @@ document.getElementById('paidBtn')?.addEventListener('click',()=>{
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
-drawSeats();updateSeatTotal();updatePaymentUI();
+populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
 
 document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
