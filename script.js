@@ -1,5 +1,8 @@
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',()=>{const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);}}));
-function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');const day=d.getDay();return day===0||day===6;}\nfunction validateWeekendDate(value){return isWeekendDate(value);}\n\nconst form=document.getElementById('bookingForm');
+function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');const day=d.getDay();return day===0||day===6;}
+function validateWeekendDate(value){return isWeekendDate(value);}
+
+const form=document.getElementById('bookingForm');
 form.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),trip=document.getElementById('trip').value,seats=document.getElementById('seats').value,date=document.getElementById('date').value,pickup=document.getElementById('pickup').value,request=document.getElementById('request').value.trim();if(!validateWeekendDate(date)){alert('Please select a Saturday or Sunday. Trips are available only on weekends.');return;}const msg='Hello Weekend Trips Pune!%0A%0A*Booking Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(seats)+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ASpecial Request: '+encodeURIComponent(request||'None')+'%0A%0APlease confirm my booking.';window.open('https://wa.me/918983416827?text='+msg,'_blank');});
 
 const SEAT_ROWS=[[1],[2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18,19]];
@@ -86,7 +89,8 @@ document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('clic
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 async function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
- if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}\n if(!validateWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday. Trips are available only on weekends.';return;}
+ if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
+ if(!validateWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday. Trips are available only on weekends.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
  if(typeof Razorpay==='undefined'){seatStatus.textContent='Payment system is still loading. Please refresh and try again.';return;}
  payNowBtn.disabled=true;
