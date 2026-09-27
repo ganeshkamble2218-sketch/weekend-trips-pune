@@ -74,7 +74,6 @@ function fillPickupSelect(id,trip){
   el.innerHTML='<option value="">Select pickup location</option>'+points.map(p=>'<option>'+p+'</option>').join('');
 }
 
-const PAYMENT_API='https://weekend-trips-pune-booking.vercel.app';
 let bookedSeats=[], selectedSeats=[];
 const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementById('tripSeat'),seatDate=document.getElementById('seatDate'),seatTotal=document.getElementById('seatTotal'),seatStatus=document.getElementById('seatStatus');
 function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((row,i)=>{const div=document.createElement('div');div.className='seat-row '+(i>0&&i<6?'wide':'');row.forEach(n=>{const b=document.createElement('button');const isBooked=bookedSeats.includes(n),isSelected=selectedSeats.includes(n);b.type='button';b.className='seat '+(isBooked?'booked':isSelected?'selected':'');b.disabled=isBooked;b.innerHTML='<span>'+(isBooked?'×':'▣')+'</span><b>'+n+'</b>';b.onclick=()=>{if(isBooked)return;selectedSeats=selectedSeats.includes(n)?selectedSeats.filter(x=>x!==n):[...selectedSeats,n].sort((a,b)=>a-b);drawSeats();updateSeatTotal()};div.appendChild(b)});seatMap.appendChild(div)});}
@@ -93,50 +92,12 @@ function openSelectedUPIApp(method){
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 async function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
- if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
+ if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
+ if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- if(typeof Razorpay==='undefined'){seatStatus.textContent='Payment system is still loading. Please refresh and try again.';return;}
- payNowBtn.disabled=true;
- seatStatus.textContent='Securing your seats and opening Razorpay…';
- try{
-   const orderRes=await fetch(PAYMENT_API+'/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,trip,date,pickup,seats:selectedSeats})});
-   const order=await orderRes.json();
-   if(!orderRes.ok)throw new Error(order.error||'Could not create payment order');
-   const options={
-     key:order.keyId,amount:order.amount,currency:order.currency,name:'Weekend Trips Pune',
-     description:trip+' • '+selectedSeats.length+' seat(s)',
-     order_id:order.orderId,
-     prefill:{name,contact:phone},
-     notes:{trip,date,pickup,seats:selectedSeats.join(', ')},
-     theme:{color:'#111827'},
-     modal:{ondismiss:()=>{payNowBtn.disabled=false;seatStatus.textContent='Payment cancelled. Your seats remain reserved temporarily. You can try again.';}},
-     handler:async function(response){
-       seatStatus.textContent='Verifying payment and confirming your seats…';
-       try{
-         const verifyRes=await fetch(PAYMENT_API+'/api/verify-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(response)});
-         const result=await verifyRes.json();
-         if(!verifyRes.ok||!result.success)throw new Error(result.error||'Payment verification failed');
-         bookedSeats=[...new Set([...bookedSeats,...selectedSeats])];
-         const confirmedSeats=[...selectedSeats];
-         selectedSeats=[];drawSeats();updateSeatTotal();
-         seatStatus.textContent='Payment successful! Seats '+confirmedSeats.join(', ')+' are booked.';
-         const msg='Hello Weekend Trips Pune!%0A%0A*Payment Successful — Booking Confirmed*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(confirmedSeats.join(', '))+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0AAmount: ₹'+encodeURIComponent(total)+'%0APayment ID: '+encodeURIComponent(response.razorpay_payment_id);
-         window.open('https://wa.me/918983416827?text='+msg,'_blank');
-       }catch(err){seatStatus.textContent=err.message||'Payment was received, but verification needs attention. Please contact us on WhatsApp.';}
-       finally{payNowBtn.disabled=false;}
-     }
-   };
-   if(paymentMethod==='card')options.config={display:{blocks:{card:{name:'Card',instruments:[{method:'card'}]}}}};
-   else if(paymentMethod==='netbanking')options.config={display:{blocks:{bank:{name:'Net Banking',instruments:[{method:'netbanking'}]}}}};
-   // For UPI, let Razorpay use its native mobile UPI-intent flow so installed apps such as Google Pay, PhonePe and Paytm can appear.
-   // Do not force a single UPI block here; that can suppress the app chooser on some mobile checkouts.
-   if(['upi','gpay','phonepe','paytm'].includes(paymentMethod)){
-     options.config={display:{blocks:{upi:{name:'UPI',instruments:[{method:'upi'}]}}},sequence:['block.upi'],preferences:{show_default_blocks:false}};
-   }
-   const rzp=new Razorpay(options);
-   rzp.on('payment.failed',function(resp){seatStatus.textContent=(resp.error&&resp.error.description)||'Payment failed. Please try again.';payNowBtn.disabled=false;});
-   rzp.open();
- }catch(e){seatStatus.textContent=e.message||'Could not start payment. Please try again.';payNowBtn.disabled=false;}
+ const msg='Hello Weekend Trips Pune!%0A%0A*Payment Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(selectedSeats.join(', '))+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0AAmount: ₹'+encodeURIComponent(total)+'%0APayment Method: '+encodeURIComponent(paymentMethod);
+ window.open('https://wa.me/918983416827?text='+msg,'_blank');
+ seatStatus.textContent='Payment request sent on WhatsApp. Online payment verification is currently disabled.';
 }
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
