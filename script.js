@@ -88,20 +88,23 @@ function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
 function getPaymentTotals(){const base=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);const gst=Math.round(base*0.05);const total=base+gst;const plan=document.querySelector('input[name="paymentPlan"]:checked')?.value||'50';const payNow=plan==='50'?Math.round(total/2):total;return{base,gst,total,plan,payNow};}
 function updatePaymentUI(){const x=getPaymentTotals();if(paymentAmount)paymentAmount.textContent='₹'+x.total.toLocaleString('en-IN');document.getElementById('basePaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.base.toLocaleString('en-IN')));document.getElementById('gstPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.gst.toLocaleString('en-IN')));document.getElementById('advancePaymentAmount')?.replaceChildren(document.createTextNode('₹'+Math.round(x.total/2).toLocaleString('en-IN')));document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));if(payNowBtn)payNowBtn.textContent='Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 function startPayment(){
- const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value;const payment=getPaymentTotals(),total=payment.total;
+ const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value;
+ const payment=getPaymentTotals(),total=payment.total;
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tn='+encodeURIComponent(trip+' '+payment.plan+'%20payment');
+ const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
  const upiUrl='upi://pay?'+params;
- const appUrl={gpay:'tez://upi/pay?'+params,phonepe:'phonepe://pay?'+params,paytm:'paytmmp://pay?'+params,upi:upiUrl}[paymentMethod]||upiUrl;
- const link=document.createElement('a');
- link.href=appUrl;
- link.style.display='none';
- document.body.appendChild(link);
- link.click();
- setTimeout(()=>{if(document.visibilityState==='visible'){window.location.href=upiUrl;}link.remove();},900);
- seatStatus.textContent='Opening '+({gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[paymentMethod]||'UPI')+'… If it does not open, use the QR code or UPI ID below.';
+ const packages={gpay:'com.google.android.apps.walletnfcrel',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
+ const pkg=packages[paymentMethod];
+ if(pkg){
+   const intentUrl='intent://pay?'+params+'#Intent;scheme=upi;package='+pkg+';end';
+   window.location.href=intentUrl;
+   setTimeout(()=>{if(document.visibilityState==='visible'){window.location.href=upiUrl;}},1200);
+ }else{
+   window.location.href=upiUrl;
+ }
+ seatStatus.textContent='Opening '+({gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[paymentMethod]||'UPI')+'… If it does not open, scan the QR code or use the UPI ID below.';
 }
 document.getElementById('paidBtn')?.addEventListener('click',()=>{
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,utr=document.getElementById('paymentUtr').value.trim(),payment=getPaymentTotals(),total=payment.total;
