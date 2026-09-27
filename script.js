@@ -84,21 +84,26 @@ seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seat
 document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect('pickup',e.target.value.split(' — ')[0]);});
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
 let paymentMethod='upi';
-function openSelectedUPIApp(method){
-  paymentMethod=method;
-  updatePaymentUI();
-  startPayment();
-  return true;
-}
+function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 async function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- if(typeof window.Razorpay!=='function'){seatStatus.textContent='Razorpay Checkout could not load. Please refresh and try again.';return;}
- seatStatus.textContent='Razorpay Checkout is loaded. Secure order creation will start after the payment backend is connected.';
+ const upiUrl='upi://pay?pa=ganeshk1234567amble-2@oksbi&pn=Weekend%20Trips%20Pune&am='+total+'&cu=INR&tn='+encodeURIComponent(trip+' booking');
+ if(paymentMethod==='gpay'||paymentMethod==='phonepe'||paymentMethod==='paytm'||paymentMethod==='upi'){
+   window.location.href=upiUrl;
+   seatStatus.textContent='Complete the payment in your UPI app, then enter your UTR/reference number below.';
+ }
 }
+document.getElementById('paidBtn')?.addEventListener('click',()=>{
+ const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,utr=document.getElementById('paymentUtr').value.trim(),total=selectedSeats.length*(SEAT_PRICES[trip]||0);
+ if(!name||!phone||!pickup||!date||!selectedSeats.length||!utr){seatStatus.textContent='Please complete your booking details, select seats, pay, and enter the UTR/reference number.';return;}
+ const msg='Hello Weekend Trips Pune!%0A%0A*Payment Confirmation*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ATravel Date: '+encodeURIComponent(date)+'%0ASeats: '+encodeURIComponent(selectedSeats.join(', '))+'%0APickup: '+encodeURIComponent(pickup)+'%0AAmount: ₹'+encodeURIComponent(total)+'%0APayment App: '+encodeURIComponent(paymentMethod==='gpay'?'Google Pay':paymentMethod==='phonepe'?'PhonePe':paymentMethod==='paytm'?'Paytm':'UPI')+'%0AUTR / Reference: '+encodeURIComponent(utr)+'%0A%0APlease verify my payment and confirm my seats.';
+ window.open('https://wa.me/918983416827?text='+msg,'_blank');
+ seatStatus.textContent='Payment confirmation sent. Your seats are pending verification.';
+});
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
