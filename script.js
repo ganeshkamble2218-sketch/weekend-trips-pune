@@ -95,9 +95,8 @@ async function startPayment(){
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- const msg='Hello Weekend Trips Pune!%0A%0A*Payment Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(selectedSeats.join(', '))+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0AAmount: ₹'+encodeURIComponent(total)+'%0APayment Method: '+encodeURIComponent(paymentMethod);
- window.open('https://wa.me/918983416827?text='+msg,'_blank');
- seatStatus.textContent='Payment request sent on WhatsApp. Online payment verification is currently disabled.';
+ if(typeof window.Razorpay!=='function'){seatStatus.textContent='Razorpay Checkout could not load. Please refresh and try again.';return;}
+ seatStatus.textContent='Razorpay Checkout is loaded. Secure order creation will start after the payment backend is connected.';
 }
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
