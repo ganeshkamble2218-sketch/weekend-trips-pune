@@ -166,20 +166,19 @@ function startPayment(){
  const transactionRef='WTP'+Date.now();
  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
  const upiUrl='upi://pay?'+params;
+ const appUrls={
+   gpay:'tez://upi/pay?'+params,
+   phonepe:'phonepe://pay?'+params,
+   paytm:'paytmmp://pay?'+params,
+   upi:upiUrl
+ };
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
- const packages={gpay:'com.google.android.apps.nbu.paisa.user',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
- const pkg=packages[paymentMethod];
- const appIntent=pkg?'intent://pay?'+params+'#Intent;scheme=upi;package='+pkg+';action=android.intent.action.VIEW;end':'intent://pay?'+params+'#Intent;scheme=upi;action=android.intent.action.VIEW;end';
+ const target=appUrls[paymentMethod]||upiUrl;
+ const qr=document.querySelector('.qr-box img');
+ if(qr)qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
  seatStatus.innerHTML='Opening '+labels[paymentMethod]+'…';
- const link=document.createElement('a');
- link.href=appIntent;
- link.target='_self';
- link.rel='noopener';
- link.style.display='none';
- document.body.appendChild(link);
- try{link.click();}catch(e){window.location.href=upiUrl;}
+ window.location.href=target;
  setTimeout(()=>{
-   link.remove();
    if(document.visibilityState==='visible'){
      seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'" style="font-weight:700">Tap here to open UPI</a> or scan the QR code below.';
    }
