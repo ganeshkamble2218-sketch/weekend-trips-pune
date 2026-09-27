@@ -85,28 +85,9 @@ document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect(
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
 let paymentMethod='upi';
 function openSelectedUPIApp(method){
-  const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);
-  if(!total){seatStatus.textContent='Please select your seat(s) first, then choose a payment app.';document.getElementById('seatMap')?.scrollIntoView({behavior:'smooth',block:'center'});return false;}
-  if(!isWeekendDate(seatDate.value)){seatStatus.textContent='Please select a Saturday or Sunday first.';return false;}
-  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(total.toFixed(2))+'&cu=INR&tn='+encodeURIComponent('Weekend Trips Pune - '+seatTrip.value+' - Seats '+selectedSeats.join(', '));
-  const schemes={
-    gpay:'tez://upi/pay?'+params,
-    phonepe:'phonepe://pay?'+params,
-    paytm:'paytmmp://pay?'+params,
-    upi:'upi://pay?'+params
-  };
-  const packages={gpay:'com.google.android.apps.nbu.paisa.user',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
-  const appName={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'your UPI app'}[method]||'UPI app';
-  seatStatus.textContent='Opening '+appName+'…';
-  let leftPage=false;
-  const stop=()=>{leftPage=true;clearTimeout(fallback);};
-  document.addEventListener('visibilitychange',stop,{once:true});
-  const fallback=setTimeout(()=>{
-    if(leftPage)return;
-    const pkg=packages[method];
-    if(pkg){window.location.href='intent://upi/pay?'+params+'#Intent;scheme=upi;package='+pkg+';end';}
-  },900);
-  window.location.href=schemes[method]||schemes.upi;
+  paymentMethod=method;
+  updatePaymentUI();
+  startPayment();
   return true;
 }
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
