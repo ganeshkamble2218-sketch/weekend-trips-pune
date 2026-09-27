@@ -86,16 +86,21 @@ const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.
 let paymentMethod='upi';
 function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
-async function startPayment(){
+function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!total){seatStatus.textContent='Please select at least one seat.';return;}
- const upiUrl='upi://pay?pa=ganeshk1234567amble-2@oksbi&pn=Weekend%20Trips%20Pune&am='+total+'&cu=INR&tn='+encodeURIComponent(trip+' booking');
- if(paymentMethod==='gpay'||paymentMethod==='phonepe'||paymentMethod==='paytm'||paymentMethod==='upi'){
-   window.location.href=upiUrl;
-   seatStatus.textContent='Complete the payment in your UPI app, then enter your UTR/reference number below.';
- }
+ const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(total)+'&cu=INR&tn='+encodeURIComponent(trip+' booking');
+ const upiUrl='upi://pay?'+params;
+ const appUrl={gpay:'tez://upi/pay?'+params,phonepe:'phonepe://pay?'+params,paytm:'paytmmp://pay?'+params,upi:upiUrl}[paymentMethod]||upiUrl;
+ const link=document.createElement('a');
+ link.href=appUrl;
+ link.style.display='none';
+ document.body.appendChild(link);
+ link.click();
+ setTimeout(()=>{if(document.visibilityState==='visible'){window.location.href=upiUrl;}link.remove();},900);
+ seatStatus.textContent='Opening '+({gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[paymentMethod]||'UPI')+'… If it does not open, use the QR code or UPI ID below.';
 }
 document.getElementById('paidBtn')?.addEventListener('click',()=>{
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,utr=document.getElementById('paymentUtr').value.trim(),total=selectedSeats.length*(SEAT_PRICES[trip]||0);
