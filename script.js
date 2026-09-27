@@ -123,7 +123,8 @@ async function startPayment(){
    };
    if(paymentMethod==='card')options.config={display:{blocks:{card:{name:'Card',instruments:[{method:'card'}]}}}};
    else if(paymentMethod==='netbanking')options.config={display:{blocks:{bank:{name:'Net Banking',instruments:[{method:'netbanking'}]}}}};
-   else if(paymentMethod==='upi'||paymentMethod==='gpay'||paymentMethod==='phonepe'||paymentMethod==='paytm')options.config={display:{blocks:{upi:{name:'UPI',instruments:[{method:'upi'}]}}}};
+   // For UPI, let Razorpay use its native mobile UPI-intent flow so installed apps such as Google Pay, PhonePe and Paytm can appear.
+   // Do not force a single UPI block here; that can suppress the app chooser on some mobile checkouts.
    const rzp=new Razorpay(options);
    rzp.on('payment.failed',function(resp){seatStatus.textContent=(resp.error&&resp.error.description)||'Payment failed. Please try again.';payNowBtn.disabled=false;});
    rzp.open();
