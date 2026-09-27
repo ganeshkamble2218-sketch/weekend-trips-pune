@@ -84,7 +84,19 @@ seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seat
 document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect('pickup',e.target.value.split(' — ')[0]);});
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
 let paymentMethod='upi';
-document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method;updatePaymentUI();}));
+function openSelectedUPIApp(method){
+  const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);
+  if(!total){seatStatus.textContent='Please select at least one seat first.';return false;}
+  const name=document.getElementById('seatName')?.value.trim()||'Weekend Trips Pune';
+  const note='Weekend Trips Pune - '+seatTrip.value;
+  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Weekend Trips Pune')+'&am='+encodeURIComponent(total.toFixed(2))+'&cu=INR&tn='+encodeURIComponent(note);
+  const links={gpay:'tez://upi/pay?'+params,phonepe:'phonepe://pay?'+params,paytm:'paytmmp://pay?'+params,upi:'upi://pay?'+params};
+  const link=links[method]||links.upi;
+  seatStatus.textContent='Opening '+({gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[method]||'UPI')+'…';
+  window.location.href=link;
+  return true;
+}
+document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method;updatePaymentUI();if(['gpay','phonepe','paytm'].includes(paymentMethod))openSelectedUPIApp(paymentMethod);}));
 function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);if(paymentAmount)paymentAmount.textContent='₹'+total.toLocaleString('en-IN');if(payNowBtn)payNowBtn.textContent=(paymentMethod==='card'||paymentMethod==='netbanking')?'Pay Securely →':'Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 async function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
