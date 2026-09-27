@@ -72,12 +72,12 @@ function fillPickupSelect(id,trip){
   el.innerHTML='<option value="">Select pickup location</option>'+points.map(p=>'<option>'+p+'</option>').join('');
 }
 
-const PAYMENT_API='';
+const PAYMENT_API='https://weekend-trips-pune-booking.vercel.app';
 let bookedSeats=[], selectedSeats=[];
 const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementById('tripSeat'),seatDate=document.getElementById('seatDate'),seatTotal=document.getElementById('seatTotal'),seatStatus=document.getElementById('seatStatus');
 function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((row,i)=>{const div=document.createElement('div');div.className='seat-row '+(i>0&&i<6?'wide':'');row.forEach(n=>{const b=document.createElement('button');const isBooked=bookedSeats.includes(n),isSelected=selectedSeats.includes(n);b.type='button';b.className='seat '+(isBooked?'booked':isSelected?'selected':'');b.disabled=isBooked;b.innerHTML='<span>'+(isBooked?'×':'▣')+'</span><b>'+n+'</b>';b.onclick=()=>{if(isBooked)return;selectedSeats=selectedSeats.includes(n)?selectedSeats.filter(x=>x!==n):[...selectedSeats,n].sort((a,b)=>a-b);drawSeats();updateSeatTotal()};div.appendChild(b)});seatMap.appendChild(div)});}
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
-async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const r=await fetch(PAYMENT_API+'/_api/seats?trip='+encodeURIComponent(seatTrip.value)+'&date='+seatDate.value);if(!r.ok)throw new Error();const d=await r.json();bookedSeats=d.bookedSeats||[];selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar'); fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar'); drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
+async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const r=await fetch(PAYMENT_API+'/api/seats?trip='+encodeURIComponent(seatTrip.value)+'&date='+seatDate.value);if(!r.ok)throw new Error();const d=await r.json();bookedSeats=[...(d.bookedSeats||[]),...(d.lockedSeats||[])];selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar');fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar');drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
 seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{selectedSeats=[];loadBookedSeats();updateSeatTotal()});
 document.getElementById('trip')?.addEventListener('change',e=>{fillPickupSelect('pickup',e.target.value.split(' — ')[0]);});
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
@@ -87,38 +87,45 @@ function updatePaymentUI(){const total=selectedSeats.length*(SEAT_PRICES[seatTri
 async function startPayment(){
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,total=selectedSeats.length*(SEAT_PRICES[trip]||0);
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
-
- if(paymentMethod==='card'||paymentMethod==='netbanking'){
-   seatStatus.textContent='Card and Net Banking are not connected yet. Please use UPI, Google Pay, PhonePe or Paytm for now.';
-   return;
- }
-
- if(!total){
-   seatStatus.textContent='Please select at least one seat.';
-   return;
- }
-
+ if(!total){seatStatus.textContent='Please select at least one seat.';return;}
+ if(typeof Razorpay==='undefined'){seatStatus.textContent='Payment system is still loading. Please refresh and try again.';return;}
  payNowBtn.disabled=true;
- seatStatus.textContent='Opening '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+'…';
-
- const upiId='ganeshk1234567amble-2@oksbi';
- const params=new URLSearchParams({
-   pa:upiId,
-   pn:'Weekend Trips Pune',
-   am:String(total),
-   cu:'INR',
-   tn:trip+' - '+selectedSeats.join(', ')+' - '+date
- });
- const upiUrl='upi://pay?'+params.toString();
-
+ seatStatus.textContent='Securing your seats and opening Razorpay…';
  try{
-   window.location.href=upiUrl;
-   setTimeout(()=>{seatStatus.textContent='UPI payment opened. Complete the payment in your UPI app, then return here and contact us on WhatsApp with your payment confirmation.';},1200);
- }catch(e){
-   seatStatus.textContent='Could not open the UPI app. Please scan the QR code below or use the Direct UPI ID.';
- }finally{
-   setTimeout(()=>{payNowBtn.disabled=false;},1500);
- }
+   const orderRes=await fetch(PAYMENT_API+'/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,phone,trip,date,pickup,seats:selectedSeats})});
+   const order=await orderRes.json();
+   if(!orderRes.ok)throw new Error(order.error||'Could not create payment order');
+   const options={
+     key:order.keyId,amount:order.amount,currency:order.currency,name:'Weekend Trips Pune',
+     description:trip+' • '+selectedSeats.length+' seat(s)',
+     order_id:order.orderId,
+     prefill:{name,contact:phone},
+     notes:{trip,date,pickup,seats:selectedSeats.join(', ')},
+     theme:{color:'#111827'},
+     modal:{ondismiss:()=>{payNowBtn.disabled=false;seatStatus.textContent='Payment cancelled. Your seats remain reserved temporarily. You can try again.';}},
+     handler:async function(response){
+       seatStatus.textContent='Verifying payment and confirming your seats…';
+       try{
+         const verifyRes=await fetch(PAYMENT_API+'/api/verify-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(response)});
+         const result=await verifyRes.json();
+         if(!verifyRes.ok||!result.success)throw new Error(result.error||'Payment verification failed');
+         bookedSeats=[...new Set([...bookedSeats,...selectedSeats])];
+         const confirmedSeats=[...selectedSeats];
+         selectedSeats=[];drawSeats();updateSeatTotal();
+         seatStatus.textContent='Payment successful! Seats '+confirmedSeats.join(', ')+' are booked.';
+         const msg='Hello Weekend Trips Pune!%0A%0A*Payment Successful — Booking Confirmed*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(confirmedSeats.join(', '))+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0AAmount: ₹'+encodeURIComponent(total)+'%0APayment ID: '+encodeURIComponent(response.razorpay_payment_id);
+         window.open('https://wa.me/918983416827?text='+msg,'_blank');
+       }catch(err){seatStatus.textContent=err.message||'Payment was received, but verification needs attention. Please contact us on WhatsApp.';}
+       finally{payNowBtn.disabled=false;}
+     }
+   };
+   if(paymentMethod==='card')options.config={display:{blocks:{card:{name:'Card',instruments:[{method:'card'}]}}}};
+   else if(paymentMethod==='netbanking')options.config={display:{blocks:{bank:{name:'Net Banking',instruments:[{method:'netbanking'}]}}}};
+   else if(paymentMethod==='upi'||paymentMethod==='gpay'||paymentMethod==='phonepe'||paymentMethod==='paytm')options.config={display:{blocks:{upi:{name:'UPI',instruments:[{method:'upi'}]}}}};
+   const rzp=new Razorpay(options);
+   rzp.on('payment.failed',function(resp){seatStatus.textContent=(resp.error&&resp.error.description)||'Payment failed. Please try again.';payNowBtn.disabled=false;});
+   rzp.open();
+ }catch(e){seatStatus.textContent=e.message||'Could not start payment. Please try again.';payNowBtn.disabled=false;}
 }
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
