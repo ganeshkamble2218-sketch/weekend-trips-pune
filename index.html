@@ -33,7 +33,7 @@
 <div class="booking-card">
 <p class="eyebrow">BOOK YOUR TRIP</p>
 <h2>Reserve your seat</h2>
-<p class="booking-intro">Choose your trip and date, then select your seats. Select your seats and send your payment request on WhatsApp.</p>
+<p class="booking-intro">Choose your trip and date, then select your seats. Select your seats, enter your details, and pay securely with Razorpay.</p>
 <div class="seat-booking">
 <div class="seat-toolbar">
 <label>Destination<select id="tripSeat"><option value="Kaas Pathar">Kaas Pathar — ₹1499</option><option value="Kokan">Kokan — ₹1050</option><option value="Matheran">Matheran — ₹999</option><option value="Mahabaleshwar">Mahabaleshwar — ₹1000</option></select></label>
@@ -73,7 +73,7 @@
 </div>
 <div class="payment-action"><div><span>Booking amount</span><strong id="paymentAmount">₹0</strong></div><button id="payNowBtn" class="book-submit" type="button">Pay Securely →</button></div>
 <div class="upi-box"><span>Direct UPI</span><strong>ganeshk1234567amble-2@oksbi</strong></div>
-<p class="payment-note">Online payment verification is temporarily disabled. Use the payment method above to send your booking request on WhatsApp.</p>
+<p class="payment-note">Razorpay checkout is ready. Secure payment verification will activate when the backend is connected.</p>
 </div>
 <div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=upi%3A%2F%2Fpay%3Fpa%3Dganeshk1234567amble-2%40oksbi%26pn%3DWeekend%2520Trips%2520Pune" alt="Weekend Trips Pune UPI payment QR code" width="260" height="260"><p>Scan with Google Pay, PhonePe, Paytm or another UPI app</p></div>
 </div>
@@ -82,5 +82,5 @@
 <section class="cta"><p class="eyebrow">READY?</p><h2>Your next memory<br>starts here.</h2><a class="primary" href="#booking">Book My Trip</a></section>
 </main>
 <footer><div class="logo">Weekend<span>Trips</span> Pune</div><p>WhatsApp: 8983416827</p><a href="https://instagram.com/ganeshkamble._22">Instagram @ganeshkamble._22</a><small>© 2026 Weekend Trips Pune</small></footer>
-<a class="call-float" href="tel:+918983416827" aria-label="Call Weekend Trips Pune"><span>📞</span></a><a class="whatsapp-float" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune!%20I%20want%20to%20know%20about%20your%20trips." target="_blank" rel="noopener" aria-label="WhatsApp Weekend Trips Pune"><span>◉</span></a><script src="script.js?v=offline-payment"></script>
+<a class="call-float" href="tel:+918983416827" aria-label="Call Weekend Trips Pune"><span>📞</span></a><a class="whatsapp-float" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune!%20I%20want%20to%20know%20about%20your%20trips." target="_blank" rel="noopener" aria-label="WhatsApp Weekend Trips Pune"><span>◉</span></a><script src="https://checkout.razorpay.com/v1/checkout.js"></script><script src="script.js?v=razorpay-checkout"></script>
 </body></html>
