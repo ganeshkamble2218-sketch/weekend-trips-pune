@@ -69,7 +69,12 @@
 <button type="button" class="pay-method" data-method="phonepe"><strong>PhonePe</strong><span>UPI payment</span></button>
 <button type="button" class="pay-method" data-method="paytm"><strong>Paytm</strong><span>UPI payment</span></button>
 </div>
-<div class="payment-action"><div><span>Booking amount</span><strong id="paymentAmount">₹0</strong></div><button id="payNowBtn" class="book-submit" type="button">Pay with Google Pay →</button></div>
+<div class="payment-breakup"><div><span>Trip amount</span><strong id="basePaymentAmount">₹0</strong></div><div><span>GST (5%)</span><strong id="gstPaymentAmount">₹0</strong></div><div><span>Total</span><strong id="paymentAmount">₹0</strong></div></div>
+<div class="payment-choice">
+<label><input type="radio" name="paymentPlan" value="50" checked> <strong>Pay 50% Advance</strong><span id="advancePaymentAmount">₹0</span></label>
+<label><input type="radio" name="paymentPlan" value="100"> <strong>Pay Full Amount</strong><span id="fullPaymentAmount">₹0</span></label>
+</div>
+<div class="payment-action"><div><span>Pay now</span><strong id="payNowAmount">₹0</strong></div><button id="payNowBtn" class="book-submit" type="button">Pay with Google Pay →</button></div>
 <div class="upi-box"><span>UPI ID</span><strong>ganeshk1234567amble-2@oksbi</strong></div>
 <div class="payment-confirm">
 <label>Payment UTR / Reference Number<input id="paymentUtr" type="text" placeholder="Enter UTR after payment"></label>
@@ -85,5 +90,5 @@
 <section class="cta"><p class="eyebrow">READY?</p><h2>Your next memory<br>starts here.</h2><a class="primary" href="#booking">Book My Trip</a></section>
 </main>
 <footer><div class="logo">Weekend<span>Trips</span> Pune</div><p>WhatsApp: 8983416827</p><a href="https://instagram.com/ganeshkamble._22">Instagram @ganeshkamble._22</a><small>© 2026 Weekend Trips Pune</small></footer>
-<a class="call-float" href="tel:+918983416827" aria-label="Call Weekend Trips Pune"><span>📞</span></a><a class="whatsapp-float" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune!%20I%20want%20to%20know%20about%20your%20trips." target="_blank" rel="noopener" aria-label="WhatsApp Weekend Trips Pune"><span>◉</span></a><script src="script.js?v=payment-fix-20260927"></script>
+<a class="call-float" href="tel:+918983416827" aria-label="Call Weekend Trips Pune"><span>📞</span></a><a class="whatsapp-float" href="https://wa.me/918983416827?text=Hello%20Weekend%20Trips%20Pune!%20I%20want%20to%20know%20about%20your%20trips." target="_blank" rel="noopener" aria-label="WhatsApp Weekend Trips Pune"><span>◉</span></a><script src="script.js?v=gst-payment-plan-20260927"></script>
 </body></html>
