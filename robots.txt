@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ganeshkamble2218-sketch.github.io/weekend-trips-pune/sitemap.xml
