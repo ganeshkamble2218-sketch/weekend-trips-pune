@@ -1,13 +1,18 @@
 import crypto from 'node:crypto';
 import {
   TRIP_PRICES, bookingKey, json, options, razorpay, redis,
-  reserveSeats, seatKey, validateBookingInput
+  reserveSeats, validateBookingInput
 } from './_lib.mjs';
 
-export async function POST(request) {
+export default async function handler(request) {
+  if (request.method === 'OPTIONS') return options();
+  if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
+
   let input;
   try {
     input = validateBookingInput(await request.json());
+    const day = new Date(input.date + 'T00:00:00').getDay();
+    if (day !== 0 && day !== 6) throw new Error('Trips are available Saturday and Sunday only');
   } catch (e) {
     return json({ error: e.message || 'Invalid booking' }, 400);
   }
@@ -61,8 +66,4 @@ export async function POST(request) {
   } catch (e) {
     return json({ error: e.message || 'Could not create payment order' }, 500);
   }
-}
-
-export async function OPTIONS() {
-  return options();
 }
