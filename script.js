@@ -158,9 +158,9 @@ function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
 function getPaymentTotals(){const base=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);const gst=Math.round(base*0.05);const total=base+gst;const plan=document.querySelector('input[name="paymentPlan"]:checked')?.value||'50';const payNow=plan==='50'?Math.round(total/2):total;return{base,gst,total,plan,payNow};}
 function updatePaymentUI(){const x=getPaymentTotals();if(paymentAmount)paymentAmount.textContent='₹'+x.total.toLocaleString('en-IN');document.getElementById('basePaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.base.toLocaleString('en-IN')));document.getElementById('gstPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.gst.toLocaleString('en-IN')));document.getElementById('advancePaymentAmount')?.replaceChildren(document.createTextNode('₹'+Math.round(x.total/2).toLocaleString('en-IN')));document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));if(payNowBtn)payNowBtn.textContent='Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 function startPayment(){
- const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value;
+ const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim(),trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
- if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a date, seats, name, mobile number and pickup location.';return;}
+ if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose a weekend date, seats, name, mobile number and pickup location.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select a Saturday or Sunday.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
  const transactionRef='WTP'+Date.now();
@@ -169,22 +169,18 @@ function startPayment(){
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
  const packages={gpay:'com.google.android.apps.nbu.paisa.user',phonepe:'com.phonepe.app',paytm:'net.one97.paytm'};
  const pkg=packages[paymentMethod];
- seatStatus.textContent='Opening '+(labels[paymentMethod]||'UPI')+'…';
- try{
-   if(pkg){
-     const intentUrl='intent://pay?'+params+'#Intent;scheme=upi;package='+pkg+';action=android.intent.action.VIEW;end';
-     const a=document.createElement('a');a.href=intentUrl;a.style.display='none';document.body.appendChild(a);a.click();a.remove();
-   }else{
-     window.location.href=upiUrl;
-   }
- }catch(e){
+ seatStatus.textContent='Opening '+labels[paymentMethod]+'…';
+ if(pkg){
+   const intent='intent://pay?'+params+'#Intent;scheme=upi;package='+pkg+';action=android.intent.action.VIEW;end';
+   window.location.href=intent;
+ }else{
    window.location.href=upiUrl;
  }
  setTimeout(()=>{
    if(document.visibilityState==='visible'){
-     seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'">Tap here to open UPI</a>, or scan the QR code below.';
+     seatStatus.innerHTML='If the payment app did not open, <a href="'+upiUrl+'">Tap here to open UPI payment</a> or scan the QR code.';
    }
- },1800);
+ },2000);
 }
 document.getElementById('paidBtn')?.addEventListener('click',()=>{
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,utr=document.getElementById('paymentUtr').value.trim(),payment=getPaymentTotals(),total=payment.total;
