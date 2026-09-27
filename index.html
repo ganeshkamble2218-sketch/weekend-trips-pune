@@ -35,7 +35,7 @@
 <p class="eyebrow">BOOK YOUR TRIP</p>
 <h2>Reserve your seat</h2>
 <p class="booking-intro">Choose your trip and date, then select your seats. Select your seats, enter your details, and pay securely with Razorpay.</p>
-<div class="seat-booking">
+<div id="seatBooking" class="seat-booking" hidden><button id="closeSeatBooking" class="seat-close" type="button" aria-label="Close seat selection">×</button><div class="selected-trip-title"><span>Selected trip</span><strong id="selectedTripTitle">Choose your trip</strong></div>
 <div class="seat-toolbar">
 <label>Destination<select id="tripSeat"><option value="Kaas Pathar">Kaas Pathar — ₹1499</option><option value="Kokan">Kokan — ₹1050</option><option value="Matheran">Matheran — ₹999</option><option value="Mahabaleshwar">Mahabaleshwar — ₹1000</option></select></label>
 <label>Travel Date<input id="seatDate" type="date" required><small class="date-note">Trips available Saturday & Sunday only</small></label>
