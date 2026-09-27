@@ -1,4 +1,4 @@
-import { hmacSha256, json, lockKey, options, redis, seatKey } from './_lib.mjs';
+import { hmacSha256, json, lockKey, options, redis, bookSeats } from './_lib.mjs';
 
 export async function POST(request) {
   const raw = await request.text();
@@ -27,11 +27,7 @@ export async function POST(request) {
     const locks = await redis(['MGET', ...booking.seats.map(seat => lockKey(booking.trip, booking.date, seat))]);
     if (locks.some(v => v !== booking.token)) return json({ received: true });
 
-    const bookedKeys = booking.seats.map(seat => seatKey(booking.trip, booking.date, seat));
-    const command = ['MSETEX', bookedKeys.length];
-    for (const key of bookedKeys) command.push(key, orderId);
-    command.push('NX');
-    const result = await redis(command);
+    const result = await bookSeats(booking.trip, booking.date, booking.seats, orderId);
 
     if (result === 1) {
       await redis(['DEL', ...booking.seats.map(seat => lockKey(booking.trip, booking.date, seat))]);
