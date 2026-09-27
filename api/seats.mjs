@@ -1,6 +1,9 @@
 import { bookedAndLockedSeats, json, options } from './_lib.mjs';
 
-export async function GET(request) {
+export default async function handler(request) {
+  if (request.method === 'OPTIONS') return options();
+  if (request.method !== 'GET') return json({ error: 'Method not allowed' }, 405);
+
   try {
     const url = new URL(request.url);
     const trip = url.searchParams.get('trip') || '';
@@ -10,8 +13,4 @@ export async function GET(request) {
   } catch (e) {
     return json({ error: e.message || 'Could not load seats' }, 500);
   }
-}
-
-export async function OPTIONS() {
-  return options();
 }
