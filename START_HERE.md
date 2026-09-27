@@ -30,3 +30,5 @@ Open `/admin` after starting the server. Login credentials are controlled by `.e
 
 ## Important
 The static `PREVIEW.html` is for viewing the customer design only. Real payment confirmation requires the Node.js server and valid Razorpay credentials. Do not put the Razorpay secret in frontend HTML.
+
+<!-- Deployment trigger: Vercel environment variables are configured. -->
