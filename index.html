@@ -77,4 +77,21 @@
    });
  }));
 })();
+</script><script>
+(async function loadTripPhotos(){
+ try{
+  const r=await fetch('trip-photos.json?v=20260929-1',{cache:'no-store'});
+  if(!r.ok)return;
+  const manifest=await r.json();
+  document.querySelectorAll('#tripGrid .trip').forEach(card=>{
+   const trip=card.querySelector('h3')?.textContent.trim();
+   const photos=manifest[trip]||[];
+   if(!photos.length)return;
+   const gallery=document.createElement('div');
+   gallery.className='trip-gallery';
+   gallery.innerHTML='<span>TRAVEL MOMENTS</span><div class="trip-gallery-track">'+photos.map((src,i)=>'<img src="'+src+'" alt="'+trip+' travel photo '+(i+1)+'" loading="lazy">').join('')+'</div><div class="gallery-hint">Swipe →</div>';
+   card.insertBefore(gallery,card.firstElementChild);
+  });
+ }catch(e){}
+})();
 </script></body></html>
