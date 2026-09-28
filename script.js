@@ -1,29 +1,40 @@
 
 function populateWeekendDates(){
- const el=document.getElementById('seatDate'); if(!el)return;
- const today=new Date(); today.setHours(0,0,0,0);
- const trip=document.getElementById('seatTrip')?.value||'Kaas Pathar';
- const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
- const day=dayMap[trip];
- el.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select date')+'</option>';
+ const el=document.getElementById('seatDate');
+ if(!el)return;
+ const tripEl=document.getElementById('seatTrip');
+ const trip=tripEl?tripEl.value:'Kaas Pathar';
+ const sundayTrips=['Kaas Pathar','Kokan'];
+ const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar'];
+ const wantedDay=sundayTrips.includes(trip)?0:saturdayTrips.includes(trip)?6:null;
+ el.innerHTML='';
+ const first=document.createElement('option');
+ first.value='';
+ first.textContent=wantedDay===0?'Select Sunday':wantedDay===6?'Select Saturday':'Select date';
+ el.appendChild(first);
+ if(wantedDay===null)return;
+ const today=new Date();
+ today.setHours(0,0,0,0);
  for(let i=0;i<370;i++){
-   const d=new Date(today); d.setDate(today.getDate()+i);
-   if(day!==undefined && d.getDay()===day){
-     const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
-     const value=y+'-'+m+'-'+dd;
-     const label=(day===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-     el.insertAdjacentHTML('beforeend','<option value="'+value+'">'+label+'</option>');
-   }
+   const d=new Date(today);
+   d.setDate(today.getDate()+i);
+   if(d.getDay()!==wantedDay)continue;
+   const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+   const option=document.createElement('option');
+   option.value=value;
+   option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+   el.appendChild(option);
  }
 }
 function isWeekendDate(value){
  if(!value)return false;
  const d=new Date(value+'T00:00:00');
- const trip=seatTrip?.value||'Kaas Pathar';
- const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
- return dayMap[trip]!==undefined && d.getDay()===dayMap[trip];
+ const trip=seatTrip?.value||'';
+ if(trip==='Kaas Pathar'||trip==='Kokan')return d.getDay()===0;
+ if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar')return d.getDay()===6;
+ return false;
 }
-document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
+document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;populateWeekendDates();seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
 document.getElementById('closeSeatBooking')?.addEventListener('click',()=>{const box=document.getElementById('seatBooking');box.hidden=true;box.classList.remove('open');document.getElementById('trips')?.scrollIntoView({behavior:'smooth'});});
 const form=document.getElementById('bookingForm');
 form?.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),trip=document.getElementById('trip').value,seats=document.getElementById('seats').value,date=document.getElementById('date').value,pickup=document.getElementById('pickup').value,request=document.getElementById('request').value.trim();const msg='Hello Weekend Trips Pune!%0A%0A*Booking Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(seats)+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ASpecial Request: '+encodeURIComponent(request||'None')+'%0A%0APlease confirm my booking.';window.open('https://wa.me/918983416827?text='+msg,'_blank');});
@@ -138,7 +149,7 @@ const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementByI
 function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((row,i)=>{const div=document.createElement('div');div.className='seat-row '+(i>0&&i<6?'wide':'');row.forEach(n=>{const b=document.createElement('button');const isBooked=bookedSeats.includes(n),isSelected=selectedSeats.includes(n);b.type='button';b.className='seat '+(isBooked?'booked':isSelected?'selected':'');b.disabled=isBooked;b.innerHTML='<span>'+(isBooked?'×':'▣')+'</span><b>'+n+'</b>';b.onclick=()=>{if(isBooked)return;selectedSeats=selectedSeats.includes(n)?selectedSeats.filter(x=>x!==n):[...selectedSeats,n].sort((a,b)=>a-b);drawSeats();updateSeatTotal()};div.appendChild(b)});seatMap.appendChild(div)});}
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
 async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const q='https://kbistbtecmazmkhmgowq.supabase.co/rest/v1/seat_blocks?select=seat_number&trip=eq.'+encodeURIComponent(seatTrip.value)+'&travel_date=eq.'+seatDate.value;const r=await fetch(q,{headers:{apikey:'sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s',Authorization:'Bearer sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s'}});if(!r.ok)throw new Error();const blocked=await r.json();bookedSeats=blocked.map(x=>Number(x.seat_number));selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar');fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar');drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
-seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);populateWeekendDates();loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{if(seatDate.value&&!isWeekendDate(seatDate.value)){seatStatus.textContent='Please select a Saturday or Sunday.';seatDate.value='';selectedSeats=[];drawSeats();updateSeatTotal();return;}selectedSeats=[];loadBookedSeats();updateSeatTotal()});
+seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);populateWeekendDates();loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{if(seatDate.value&&!isWeekendDate(seatDate.value)){seatStatus.textContent=(trip==='Kaas Pathar'||trip==='Kokan')?'Please select a Sunday.':(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar')?'Please select a Saturday.':'Please select a valid trip date.';seatDate.value='';selectedSeats=[];drawSeats();updateSeatTotal();return;}selectedSeats=[];loadBookedSeats();updateSeatTotal()});
 function updateOldPickupAddress(value){
  const box=document.getElementById('pickupAddressOld'); if(!box)return;
  if(!value){box.innerHTML='';return;}
