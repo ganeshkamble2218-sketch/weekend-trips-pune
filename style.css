@@ -218,3 +218,6 @@ footer .brand-word strong{font-size:16px}
   .seat-booking .seat b{font-size:15px!important}
 }
 @media(prefers-reduced-motion:reduce){.seat-booking .seat:hover:not(:disabled){transform:none!important}}
+
+/* Customer trip category filter */
+.trip-category-filter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:900px;margin:34px auto 42px;padding:0 8px}.trip-filter{min-height:92px;border:1px solid #e1e3e7;border-radius:22px;background:#fff;color:#4b5563;font:600 22px 'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(20,32,23,.06);cursor:pointer;transition:.2s ease}.trip-filter:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,32,23,.1)}.trip-filter.active{background:#fff1dc;border-color:#f4c98e;color:#ed6c18;box-shadow:0 5px 16px rgba(237,108,24,.12)}.trip-filter:first-child{background:#fff}.trip-filter.active:first-child{background:#fff1dc;color:#ed6c18}.trip-filter:focus-visible{outline:3px solid #d7e65a;outline-offset:3px}.trip.is-filtered-out{display:none!important}@media(max-width:600px){.trip-category-filter{grid-template-columns:1fr;gap:12px;margin:25px auto 30px;padding:0}.trip-filter{min-height:68px;font-size:18px;border-radius:18px}}
