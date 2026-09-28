@@ -2,10 +2,10 @@
 function populateWeekendDates(){
  const el=document.getElementById('seatDate'); if(!el)return;
  const today=new Date(); today.setHours(0,0,0,0);
- el.innerHTML='<option value="">'+(document.getElementById('seatTrip')?.value==='Harihareshwar – Diveagar'?'Select Saturday':'Select Saturday or Sunday')+'</option>'; 
+ const trip=document.getElementById('seatTrip')?.value||'';const datePrompt=(trip==='Kokan'||trip==='Kaas Pathar'||trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar')?(trip==='Kokan'||trip==='Kaas Pathar'?'Select Sunday':'Select Saturday'):'Select Saturday or Sunday';el.innerHTML='<option value="">'+datePrompt+'</option>'; 
  for(let i=0;i<370;i++){
    const d=new Date(today); d.setDate(today.getDate()+i);
-   if(document.getElementById('seatTrip')?.value==='Harihareshwar – Diveagar' ? d.getDay()===6 : (d.getDay()===0||d.getDay()===6)){
+   const t=document.getElementById('seatTrip')?.value||'';const allowed=(t==='Kokan'||t==='Kaas Pathar')?d.getDay()===0:(t==='Mahabaleshwar'||t==='Harihareshwar – Diveagar')?d.getDay()===6:(d.getDay()===0||d.getDay()===6);if(allowed){
      const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
      const value=y+'-'+m+'-'+day;
      const label=(d.getDay()===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
@@ -13,7 +13,7 @@ function populateWeekendDates(){
    }
  }
 }
-function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');return seatTrip?.value==='Harihareshwar – Diveagar'?d.getDay()===6:(d.getDay()===0||d.getDay()===6);}
+function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');const trip=seatTrip?.value||'';if(trip==='Kokan'||trip==='Kaas Pathar')return d.getDay()===0;if(trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar')return d.getDay()===6;return d.getDay()===0||d.getDay()===6;}
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
 document.getElementById('closeSeatBooking')?.addEventListener('click',()=>{const box=document.getElementById('seatBooking');box.hidden=true;box.classList.remove('open');document.getElementById('trips')?.scrollIntoView({behavior:'smooth'});});
 const form=document.getElementById('bookingForm');
@@ -164,7 +164,7 @@ function startPayment(){
  const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim(),trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose date, seats, name, mobile number and pickup first.';return;}
- if(!isWeekendDate(date)){seatStatus.textContent=trip==='Harihareshwar – Diveagar'?'Please select a Saturday.':'Please select a Saturday or Sunday.';return;}
+ if(!isWeekendDate(date)){seatStatus.textContent=(trip==='Kokan'||trip==='Kaas Pathar')?'Please select a Sunday.':(trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar')?'Please select a Saturday.':'Please select a Saturday or Sunday.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
  const transactionRef='WTP'+Date.now();
  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
