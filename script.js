@@ -2,18 +2,27 @@
 function populateWeekendDates(){
  const el=document.getElementById('seatDate'); if(!el)return;
  const today=new Date(); today.setHours(0,0,0,0);
- const trip=document.getElementById('seatTrip')?.value||'';const datePrompt=(trip==='Kokan'||trip==='Kaas Pathar'||trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar')?(trip==='Kokan'||trip==='Kaas Pathar'?'Select Sunday':'Select Saturday'):'Select Saturday or Sunday';el.innerHTML='<option value="">'+datePrompt+'</option>'; 
+ const trip=document.getElementById('seatTrip')?.value||'';
+ const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
+ const day=dayMap[trip];
+ el.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select date')+'</option>';
  for(let i=0;i<370;i++){
    const d=new Date(today); d.setDate(today.getDate()+i);
-   const t=document.getElementById('seatTrip')?.value||'';const allowed=(t==='Kokan'||t==='Kaas Pathar')?d.getDay()===0:(t==='Mahabaleshwar'||t==='Harihareshwar – Diveagar')?d.getDay()===6:(d.getDay()===0||d.getDay()===6);if(allowed){
-     const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
-     const value=y+'-'+m+'-'+day;
-     const label=(d.getDay()===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+   if(day!==undefined && d.getDay()===day){
+     const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+     const value=y+'-'+m+'-'+dd;
+     const label=(day===6?'Saturday':'Sunday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
      el.insertAdjacentHTML('beforeend','<option value="'+value+'">'+label+'</option>');
    }
  }
 }
-function isWeekendDate(value){if(!value)return false;const d=new Date(value+'T00:00:00');const trip=seatTrip?.value||'';if(trip==='Kokan'||trip==='Kaas Pathar')return d.getDay()===0;if(trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar')return d.getDay()===6;return d.getDay()===0||d.getDay()===6;}
+function isWeekendDate(value){
+ if(!value)return false;
+ const d=new Date(value+'T00:00:00');
+ const trip=seatTrip?.value||'';
+ const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
+ return dayMap[trip]!==undefined && d.getDay()===dayMap[trip];
+}
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
 document.getElementById('closeSeatBooking')?.addEventListener('click',()=>{const box=document.getElementById('seatBooking');box.hidden=true;box.classList.remove('open');document.getElementById('trips')?.scrollIntoView({behavior:'smooth'});});
 const form=document.getElementById('bookingForm');
