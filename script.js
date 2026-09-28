@@ -2,7 +2,7 @@
 function populateWeekendDates(){
  const el=document.getElementById('seatDate'); if(!el)return;
  const today=new Date(); today.setHours(0,0,0,0);
- const trip=document.getElementById('seatTrip')?.value||'';
+ const trip=document.getElementById('seatTrip')?.value||'Kaas Pathar';
  const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
  const day=dayMap[trip];
  el.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select date')+'</option>';
@@ -19,7 +19,7 @@ function populateWeekendDates(){
 function isWeekendDate(value){
  if(!value)return false;
  const d=new Date(value+'T00:00:00');
- const trip=seatTrip?.value||'';
+ const trip=seatTrip?.value||'Kaas Pathar';
  const dayMap={'Kaas Pathar':0,'Kokan':0,'Harihareshwar – Diveagar':6,'Matheran':6,'Mahabaleshwar':6};
  return dayMap[trip]!==undefined && d.getDay()===dayMap[trip];
 }
