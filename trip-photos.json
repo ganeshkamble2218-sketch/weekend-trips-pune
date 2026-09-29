@@ -5,7 +5,11 @@
     "assets/trips/kaas-pathar-3.jpg",
     "assets/trips/kaas-pathar-4.jpg"
   ],
-  "Kokan": [],
+  "Kokan": [
+    "https://weekend-trips-pune-booking.floot.app/_cdn/static/6fc53c64-e107-4084-9ae2-bff3d65de571-kokan-1.jpg",
+    "https://weekend-trips-pune-booking.floot.app/_cdn/static/df23a671-99fe-493c-8092-be6d774b7475-kokan-2.jpg",
+    "https://weekend-trips-pune-booking.floot.app/_cdn/static/190386d3-8882-44ee-b911-71591140f35a-kokan-3.jpg"
+  ],
   "Matheran": [],
   "Mahabaleshwar": [],
   "Harihareshwar – Diveagar": [],
