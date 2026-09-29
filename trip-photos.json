@@ -1,17 +1,38 @@
 {
   "Kaas Pathar": [
-    "assets/trips/kaas-pathar-1.jpg",
-    "assets/trips/kaas-pathar-2.jpg",
-    "assets/trips/kaas-pathar-3.jpg",
-    "assets/trips/kaas-pathar-4.jpg"
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1800&q=90"
   ],
   "Kokan": [
     "https://weekend-trips-pune-booking.floot.app/_cdn/static/6fc53c64-e107-4084-9ae2-bff3d65de571-kokan-1.jpg",
     "https://weekend-trips-pune-booking.floot.app/_cdn/static/df23a671-99fe-493c-8092-be6d774b7475-kokan-2.jpg",
-    "https://weekend-trips-pune-booking.floot.app/_cdn/static/190386d3-8882-44ee-b911-71591140f35a-kokan-3.jpg"
+    "https://weekend-trips-pune-booking.floot.app/_cdn/static/190386d3-8882-44ee-b911-71591140f35a-kokan-3.jpg",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=90"
   ],
-  "Matheran": [],
-  "Mahabaleshwar": [],
-  "Harihareshwar – Diveagar": [],
-  "Kaas Pathar + Mahabaleshwar Stay": []
+  "Matheran": [
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1800&q=90"
+  ],
+  "Mahabaleshwar": [
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90"
+  ],
+  "Harihareshwar – Diveagar": [
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1800&q=90"
+  ],
+  "Kaas Pathar + Mahabaleshwar Stay": [
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=90",
+    "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=90"
+  ]
 }
