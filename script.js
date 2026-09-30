@@ -358,7 +358,30 @@ document.getElementById('paidBtn')?.addEventListener('click',()=>{
 });
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
-document.getElementById('seatBookBtn')?.addEventListener('click',()=>{document.getElementById('payment')?.scrollIntoView({behavior:'smooth'});updatePaymentUI();});
+document.getElementById('seatBookBtn')?.addEventListener('click',()=>{
+ const paymentSection=document.getElementById('payment');
+ const status=document.getElementById('seatStatus');
+ const missing=[];
+ if(!seatDate?.value) missing.push('travel date');
+ if(!selectedSeats.length) missing.push('at least one seat');
+ if(!document.getElementById('seatName')?.value.trim()) missing.push('name');
+ if(!document.getElementById('seatPhone')?.value.trim()) missing.push('mobile number');
+ if(!document.getElementById('seatEmail')?.value.trim()) missing.push('email');
+ if(!document.getElementById('seatPickup')?.value) missing.push('pickup location');
+ if(missing.length){
+   if(status) status.textContent='Please complete: '+missing.join(', ')+'.';
+   const firstMissing=missing[0];
+   const target=firstMissing==='travel date'?seatDate:firstMissing==='at least one seat'?document.getElementById('seatMap'):firstMissing==='name'?document.getElementById('seatName'):firstMissing==='mobile number'?document.getElementById('seatPhone'):firstMissing==='email'?document.getElementById('seatEmail'):document.getElementById('seatPickup');
+   target?.scrollIntoView({behavior:'smooth',block:'center'});
+   target?.focus?.();
+   return;
+ }
+ updatePaymentUI();
+ if(paymentSection){
+   paymentSection.scrollIntoView({behavior:'smooth',block:'start'});
+   setTimeout(()=>document.getElementById('payNowBtn')?.focus(),650);
+ }
+});
 populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
 
 document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
