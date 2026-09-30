@@ -161,6 +161,25 @@ function fillPickupSelect(id,trip){
 
 let bookedSeats=[], selectedSeats=[];
 const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementById('tripSeat'),seatDate=document.getElementById('seatDate'),seatTotal=document.getElementById('seatTotal'),seatStatus=document.getElementById('seatStatus');
+function setTripDates(){
+ const t=seatTrip?.value||'';
+ const day=(t==='Kaas Pathar'||t==='Kokan')?0:(t==='Matheran'||t==='Mahabaleshwar'||t==='Harihareshwar – Diveagar'||t==='Kaas Pathar + Mahabaleshwar Stay')?6:null;
+ if(!seatDate)return;
+ seatDate.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select trip first')+'</option>';
+ if(day===null)return;
+ const today=new Date(); today.setHours(0,0,0,0);
+ for(let i=0;i<=370;i++){
+   const d=new Date(today); d.setDate(today.getDate()+i);
+   if(d.getDay()!==day)continue;
+   const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+   const o=document.createElement('option');
+   o.value=y+'-'+m+'-'+dd;
+   o.textContent=(day===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+   seatDate.appendChild(o);
+ }
+}
+seatTrip?.addEventListener('change',()=>{setTripDates();selectedSeats=[];bookedSeats=[];drawSeats();updateSeatTotal();});
+setTripDates();
 function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';[[1],[2,3,4],[5,6,7],[8,9,10],[11,12,13],[14,15,16],[17,18,19]].forEach((row,i)=>{const div=document.createElement('div');div.className='seat-row '+(i>0&&i<6?'wide':'');row.filter(n=>n<=19).forEach(n=>{const b=document.createElement('button');const isBooked=bookedSeats.includes(n),isSelected=selectedSeats.includes(n);b.type='button';b.className='seat '+(isBooked?'booked':isSelected?'selected':'');b.disabled=isBooked;b.innerHTML='<span>'+(isBooked?'×':'▣')+'</span><b>'+n+'</b>';b.onclick=()=>{if(isBooked)return;selectedSeats=selectedSeats.includes(n)?selectedSeats.filter(x=>x!==n):[...selectedSeats,n].sort((a,b)=>a-b);drawSeats();updateSeatTotal()};div.appendChild(b)});seatMap.appendChild(div)});}
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
 async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const q='https://kbistbtecmazmkhmgowq.supabase.co/rest/v1/seat_blocks?select=seat_number&trip=eq.'+encodeURIComponent(seatTrip.value)+'&travel_date=eq.'+seatDate.value;const r=await fetch(q,{headers:{apikey:'sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s',Authorization:'Bearer sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s'}});if(!r.ok)throw new Error();const blocked=await r.json();bookedSeats=blocked.map(x=>Number(x.seat_number));selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar');fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar');drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
