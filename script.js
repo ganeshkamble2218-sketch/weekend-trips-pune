@@ -196,11 +196,16 @@ function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
 function getPaymentTotals(){const base=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);const gst=Math.round(base*0.05);const total=base+gst;const plan=document.querySelector('input[name="paymentPlan"]:checked')?.value||'50';const payNow=plan==='50'?Math.round(total/2):total;return{base,gst,total,plan,payNow};}
 function updatePaymentUI(){const x=getPaymentTotals();if(paymentAmount)paymentAmount.textContent='₹'+x.total.toLocaleString('en-IN');document.getElementById('basePaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.base.toLocaleString('en-IN')));document.getElementById('gstPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.gst.toLocaleString('en-IN')));document.getElementById('advancePaymentAmount')?.replaceChildren(document.createTextNode('₹'+Math.round(x.total/2).toLocaleString('en-IN')));document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));if(payNowBtn)payNowBtn.textContent='Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}
 function startPayment(){
- const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim(),email=document.getElementById('seatEmail')?.value.trim(),trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
+ const name=document.getElementById('seatName')?.value.trim();
+ const phone=document.getElementById('seatPhone')?.value.trim();
+ const email=(document.getElementById('paymentCustomerEmail')?.value.trim()||document.getElementById('seatEmail')?.value.trim());
+ const emailField=document.getElementById('seatEmail');
+ if(emailField) emailField.value=email;
+ const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
- if(!date||!name||!phone||!email||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose date, seats, name, mobile number, email and pickup first.';return;}
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address for your invoice.';return;}
- if(!isWeekendDate(date)){seatStatus.textContent=(trip==='Kokan'||trip==='Kaas Pathar')?'Please select a Sunday.':(trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar'||trip==='Kaas Pathar + Mahabaleshwar Stay')?'Please select a Saturday.':'Please select a Saturday or Sunday.';return;}
+ if(!date||!name||!phone||!email||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile, email and pickup first.';return;}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address.';return;}
+ if(!isWeekendDate(date)){seatStatus.textContent='Please select the correct trip day.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
  const transactionRef='WTP'+Date.now();
  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
@@ -209,22 +214,21 @@ function startPayment(){
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
  const target=appUrls[paymentMethod]||upiUrl;
  const qr=document.querySelector('.qr-box img');
- if(qr)qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
+ if(qr) qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
  seatStatus.innerHTML='Opening '+labels[paymentMethod]+'…';
- // Use a real anchor click for Android/iOS deep-link handling, then provide a generic UPI fallback.
+ // Try the selected app first, then automatically offer standard UPI if Android keeps the page open.
  const launcher=document.createElement('a');
  launcher.href=target;
  launcher.target='_self';
- launcher.rel='noopener';
  launcher.style.display='none';
  document.body.appendChild(launcher);
  launcher.click();
- setTimeout(()=>launcher.remove(),500);
+ setTimeout(()=>launcher.remove(),1000);
  setTimeout(()=>{
    if(document.visibilityState==='visible'){
-     seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'" style="font-weight:700">Tap here to open UPI</a> or scan the QR code below.';
+     seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'" style="display:inline-block;margin-top:8px;font-weight:800;text-decoration:underline">Tap here to open UPI payment</a><br><small>If the app still does not open, scan the QR code.</small>';
    }
- },1800);
+ },2200);
 }
 
 // EmailJS invoice delivery — fill these 3 public dashboard values after creating the template.
