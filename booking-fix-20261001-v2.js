@@ -204,7 +204,7 @@ function updateOldPickupAddress(value){
 function populateOldBookingDates(){
  const el=document.getElementById('date'); if(!el)return;
  const today=new Date(); today.setHours(0,0,0,0);
- el.innerHTML='<option value="">Select Saturday or Sunday</option>';
+ el.innerHTML='<option value="">Select a trip date</option>';
  for(let i=0;i<370;i++){
   const d=new Date(today); d.setDate(today.getDate()+i);
   if(d.getDay()===0||d.getDay()===6){
