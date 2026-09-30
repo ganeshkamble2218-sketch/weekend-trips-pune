@@ -133,4 +133,32 @@ document.addEventListener('DOMContentLoaded',function(){
   });
  }catch(e){}
 })();
+</script><script>
+document.addEventListener('DOMContentLoaded',function(){
+ const trip=document.getElementById('tripSeat'),date=document.getElementById('seatDate');
+ function refreshBookingControls(){
+   if(!trip||!date)return;
+   const t=trip.value;
+   const day=(t==='Kaas Pathar'||t==='Kokan')?0:(t==='Matheran'||t==='Mahabaleshwar'||t==='Harihareshwar – Diveagar'||t==='Kaas Pathar + Mahabaleshwar Stay')?6:null;
+   date.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select date')+'</option>';
+   if(day===null)return;
+   const today=new Date(); today.setHours(0,0,0,0);
+   for(let i=0;i<370;i++){
+     const d=new Date(today); d.setDate(today.getDate()+i);
+     if(d.getDay()!==day)continue;
+     const v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+     const o=document.createElement('option'); o.value=v;
+     o.textContent=(day===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+     date.appendChild(o);
+   }
+ }
+ trip?.addEventListener('change',refreshBookingControls);
+ refreshBookingControls();
+ const observer=new MutationObserver(function(){
+   const bad=[...document.querySelectorAll('#seatMap button.seat')].filter(b=>b.textContent.trim()==='20');
+   bad.forEach(b=>b.remove());
+ });
+ const map=document.getElementById('seatMap');
+ if(map)observer.observe(map,{childList:true,subtree:true});
+});
 </script></body></html>
