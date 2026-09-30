@@ -1,29 +1,37 @@
 
 function populateWeekendDates(){
- const el=document.getElementById('seatDate');
- if(!el)return;
- const tripEl=document.getElementById('tripSeat');
- const trip=tripEl?tripEl.value:'Kaas Pathar';
+ const seatEl=document.getElementById('seatDate');
+ const oldEl=document.getElementById('date');
+ const seatTripEl=document.getElementById('tripSeat');
+ const oldTripEl=document.getElementById('trip');
+ const trip=seatTripEl?.value||'';
  const sundayTrips=['Kaas Pathar','Kokan'];
  const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay'];
  const wantedDay=sundayTrips.includes(trip)?0:saturdayTrips.includes(trip)?6:null;
- el.innerHTML='';
- const first=document.createElement('option');
- first.value='';
- first.textContent=wantedDay===0?'Select Sunday':wantedDay===6?'Select Saturday':'Select date';
- el.appendChild(first);
- if(wantedDay===null)return;
- const today=new Date();
- today.setHours(0,0,0,0);
- for(let i=0;i<370;i++){
-   const d=new Date(today);
-   d.setDate(today.getDate()+i);
-   if(d.getDay()!==wantedDay)continue;
-   const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-   const option=document.createElement('option');
-   option.value=value;
-   option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-   el.appendChild(option);
+ const fill=(el)=>{
+   if(!el)return;
+   el.innerHTML='';
+   const first=document.createElement('option');
+   first.value='';
+   first.textContent=wantedDay===0?'Select a Sunday date':wantedDay===6?'Select a Saturday date':'Select trip first';
+   el.appendChild(first);
+   if(wantedDay===null)return;
+   const today=new Date(); today.setHours(0,0,0,0);
+   for(let i=0;i<370;i++){
+     const d=new Date(today); d.setDate(today.getDate()+i);
+     if(d.getDay()!==wantedDay)continue;
+     const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+     const option=document.createElement('option');
+     option.value=value;
+     option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+     el.appendChild(option);
+   }
+ };
+ fill(seatEl);
+ fill(oldEl);
+ if(oldTripEl&&trip){
+   const opt=[...oldTripEl.options].find(o=>o.text.startsWith(trip));
+   if(opt)oldTripEl.value=opt.value;
  }
 }
 function isWeekendDate(value){
@@ -35,6 +43,7 @@ function isWeekendDate(value){
  return false;
 }
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;populateWeekendDates();seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
+document.getElementById('trip')?.addEventListener('change',()=>{ const raw=document.getElementById('trip')?.value||''; const trip=raw.split(' — ₹')[0]; const seatTripEl=document.getElementById('tripSeat'); if(seatTripEl&&trip){seatTripEl.value=trip; fillPickupSelect('seatPickup',trip); fillPickupSelect('pickup',trip);} populateWeekendDates(); });
 document.getElementById('closeSeatBooking')?.addEventListener('click',()=>{const box=document.getElementById('seatBooking');box.hidden=true;box.classList.remove('open');document.getElementById('trips')?.scrollIntoView({behavior:'smooth'});});
 const form=document.getElementById('bookingForm');
 form?.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),trip=document.getElementById('trip').value,seats=document.getElementById('seats').value,date=document.getElementById('date').value,pickup=document.getElementById('pickup').value,request=document.getElementById('request').value.trim();const msg='Hello Weekend Trips Pune!%0A%0A*Booking Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(seats)+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ASpecial Request: '+encodeURIComponent(request||'None')+'%0A%0APlease confirm my booking.';window.open('https://wa.me/918983416827?text='+msg,'_blank');});
