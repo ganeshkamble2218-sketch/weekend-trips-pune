@@ -200,8 +200,7 @@ function startPayment(){
  const phone=document.getElementById('seatPhone')?.value.trim();
 const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
- if(!date||!name||!phone||!email||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile, email and pickup first.';return;}
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address.';return;}
+ if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile and pickup first.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select the correct trip day.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
  const transactionRef='WTP'+Date.now();
