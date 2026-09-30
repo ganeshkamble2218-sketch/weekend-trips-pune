@@ -161,4 +161,57 @@ document.addEventListener('DOMContentLoaded',function(){
  const map=document.getElementById('seatMap');
  if(map)observer.observe(map,{childList:true,subtree:true});
 });
+</script><script>
+(function(){
+  function setupPWGBooking(){
+    const trip=document.getElementById('seatTrip');
+    const date=document.getElementById('seatDate');
+    const map=document.getElementById('seatMap');
+    if(trip&&date){
+      function setDates(){
+        const v=trip.value||'';
+        const sunday=/^(Kaas Pathar|Kokan)$/.test(v);
+        const saturday=/^(Matheran|Mahabaleshwar|Harihareshwar – Diveagar|Kaas Pathar \+ Mahabaleshwar Stay)$/.test(v);
+        const day=sunday?0:saturday?6:null;
+        date.innerHTML='';
+        const first=document.createElement('option');
+        first.value='';
+        first.textContent=day===0?'Select Sunday':day===6?'Select Saturday':'Select travel date';
+        date.appendChild(first);
+        if(day===null)return;
+        const now=new Date(); now.setHours(0,0,0,0);
+        for(let i=0;i<370;i++){
+          const d=new Date(now); d.setDate(now.getDate()+i);
+          if(d.getDay()!==day)continue;
+          const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
+          const o=document.createElement('option');
+          o.value=y+'-'+m+'-'+dd;
+          o.textContent=(day===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+          date.appendChild(o);
+        }
+      }
+      trip.removeEventListener('change',setDates);
+      trip.addEventListener('change',setDates);
+      setDates();
+    }
+    function cleanSeats(){
+      const m=document.getElementById('seatMap');
+      if(!m)return;
+      m.querySelectorAll('button.seat').forEach(function(b){
+        const n=parseInt((b.textContent||'').replace(/\D/g,''),10);
+        if(!Number.isFinite(n)||n<1||n>19)b.remove();
+      });
+      const count=document.querySelector('.bus-count');
+      if(count)count.textContent='19 Seats';
+    }
+    cleanSeats();
+    const m=document.getElementById('seatMap');
+    if(m){
+      new MutationObserver(cleanSeats).observe(m,{childList:true,subtree:true});
+    }
+    setInterval(cleanSeats,500);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupPWGBooking);
+  else setupPWGBooking();
+})();
 </script></body></html>
