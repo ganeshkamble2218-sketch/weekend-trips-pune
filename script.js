@@ -222,14 +222,116 @@ function startPayment(){
    }
  },1800);
 }
+
+// EmailJS invoice delivery — fill these 3 public dashboard values after creating the template.
+const EMAILJS_PUBLIC_KEY='YOUR_EMAILJS_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID='YOUR_EMAILJS_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID='YOUR_EMAILJS_TEMPLATE_ID';
+if(window.emailjs && EMAILJS_PUBLIC_KEY!=='YOUR_EMAILJS_PUBLIC_KEY'){
+  emailjs.init({publicKey:EMAILJS_PUBLIC_KEY, blockHeadless:true, limitRate:{id:'pwg-invoice',throttle:1200}});
+}
+
+function buildInvoicePdf(invoice){
+  if(!window.jspdf?.jsPDF) throw new Error('Invoice PDF library is not available.');
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const money=n=> 'INR '+Number(n||0).toLocaleString('en-IN');
+  const lines=[];
+  doc.setFontSize(20); doc.text('Pune Weekend Getaways',20,22);
+  doc.setFontSize(10); doc.text('Booking Payment Receipt / Invoice',20,29);
+  doc.text('Booking ID: '+invoice.bookingId,20,37);
+  doc.text('Created: '+new Date(invoice.createdAt).toLocaleString('en-IN'),20,43);
+  doc.line(20,48,190,48);
+  doc.setFontSize(12); doc.text('Customer Details',20,58);
+  doc.setFontSize(10);
+  doc.text('Name: '+invoice.customer.name,20,66);
+  doc.text('Mobile: '+invoice.customer.phone,20,72);
+  doc.text('Email: '+invoice.customer.email,20,78);
+  doc.text('Trip: '+invoice.trip,20,88);
+  doc.text('Travel Date: '+invoice.date,20,94);
+  doc.text('Pickup: '+invoice.pickup,20,100);
+  doc.text('Seat(s): '+invoice.seats.join(', '),20,106);
+  doc.line(20,112,190,112);
+  doc.setFontSize(12); doc.text('Payment Details',20,122);
+  doc.setFontSize(10);
+  doc.text('Trip Amount: '+money(invoice.pricing.base),20,130);
+  doc.text('GST (5%): '+money(invoice.pricing.gst),20,136);
+  doc.text('Total: '+money(invoice.pricing.total),20,142);
+  doc.text('Amount Paid: '+money(invoice.pricing.amountPaid),20,148);
+  doc.text('Balance: '+money(invoice.pricing.balance),20,154);
+  doc.text('Payment Plan: '+invoice.payment.plan,20,162);
+  doc.text('Payment App: '+invoice.payment.method,20,168);
+  doc.text('UTR / Reference: '+invoice.payment.utr,20,174);
+  doc.line(20,181,190,181);
+  doc.setFontSize(9);
+  doc.text('Payment status: UTR submitted — pending verification.',20,190);
+  doc.text('Please keep this receipt for your records.',20,196);
+  doc.text('WhatsApp: 8983416827',20,207);
+  return doc;
+}
+
+function invoiceEmailConfigured(){
+  return !!(window.emailjs && EMAILJS_PUBLIC_KEY!=='YOUR_EMAILJS_PUBLIC_KEY' && EMAILJS_SERVICE_ID!=='YOUR_EMAILJS_SERVICE_ID' && EMAILJS_TEMPLATE_ID!=='YOUR_EMAILJS_TEMPLATE_ID');
+}
+
+async function sendInvoiceEmailTo(invoice,toEmail,pdfDataUri){
+  const attachmentBase64=pdfDataUri;
+  const params={
+    to_email:toEmail,
+    reply_to:invoice.ownerEmail,
+    customer_name:invoice.customer.name,
+    customer_email:invoice.customer.email,
+    booking_id:invoice.bookingId,
+    trip:invoice.trip,
+    travel_date:invoice.date,
+    pickup:invoice.pickup,
+    seats:invoice.seats.join(', '),
+    base_amount:invoice.pricing.base,
+    gst:invoice.pricing.gst,
+    total_amount:invoice.pricing.total,
+    amount_paid:invoice.pricing.amountPaid,
+    balance:invoice.pricing.balance,
+    payment_plan:invoice.payment.plan,
+    payment_method:invoice.payment.method,
+    utr:invoice.payment.utr,
+    payment_status:'UTR submitted — pending verification',
+    invoice_pdf:attachmentBase64
+  };
+  return emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,params);
+}
+
+async function sendInvoiceEmails(invoice){
+  const doc=buildInvoicePdf(invoice);
+  const pdfDataUri=doc.output('datauristring');
+  // Always save a local copy so the customer can retrieve the receipt even if email delivery fails.
+  const blob=doc.output('blob');
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url; link.download=invoice.bookingId+'.pdf'; link.textContent='Download Invoice PDF';
+  link.style.display='inline-block'; link.style.marginTop='10px'; link.style.fontWeight='700';
+  seatStatus.appendChild(document.createElement('br')); seatStatus.appendChild(link);
+  if(!invoiceEmailConfigured()) throw new Error('EmailJS is not configured yet.');
+  await sendInvoiceEmailTo(invoice,invoice.customer.email,pdfDataUri);
+  await new Promise(resolve=>setTimeout(resolve,1200));
+  await sendInvoiceEmailTo(invoice,invoice.ownerEmail,pdfDataUri);
+  return true;
+}
+
 document.getElementById('paidBtn')?.addEventListener('click',()=>{
  const name=document.getElementById('seatName').value.trim(),phone=document.getElementById('seatPhone').value.trim(),email=document.getElementById('seatEmail').value.trim(),trip=seatTrip.value,date=seatDate.value,pickup=document.getElementById('seatPickup').value,utr=document.getElementById('paymentUtr').value.trim(),payment=getPaymentTotals(),total=payment.total;
  if(!name||!phone||!email||!pickup||!date||!selectedSeats.length||!utr){seatStatus.textContent='Please complete your booking details including email, select seats, pay, and enter the UTR/reference number.';return;} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address for your invoice.';return;}
  const msg='Hello Weekend Trips Pune!%0A%0A*Payment Confirmation*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ATravel Date: '+encodeURIComponent(date)+'%0ASeats: '+encodeURIComponent(selectedSeats.join(', '))+'%0APickup: '+encodeURIComponent(pickup)+'%0AFull Amount incl. GST: ₹'+encodeURIComponent(payment.total)+'%0AAmount Paid: ₹'+encodeURIComponent(payment.payNow)+'%0APayment Plan: '+encodeURIComponent(payment.plan==='50'?'50% Advance':'Full Payment')+'%0APayment App: '+encodeURIComponent(paymentMethod==='gpay'?'Google Pay':paymentMethod==='phonepe'?'PhonePe':paymentMethod==='paytm'?'Paytm':'UPI')+'%0AUTR / Reference: '+encodeURIComponent(utr)+'%0A%0APlease verify my payment and confirm my seats.';
  const invoiceData={bookingId:'WTP'+Date.now(),customer:{name,phone,email},trip,date,pickup,seats:[...selectedSeats],pricing:{base:payment.base,gst:payment.gst,total:payment.total,amountPaid:payment.payNow,balance:Math.max(0,payment.total-payment.payNow)},payment:{plan:payment.plan==='50'?'50% Advance':'Full Payment',method:paymentMethod,utr},ownerEmail:'ganeshkamble2218@gmail.com',createdAt:new Date().toISOString()};
  sessionStorage.setItem('pwg_invoice_data',JSON.stringify(invoiceData));
- window.open('https://wa.me/918983416827?text='+msg,'_blank');
- seatStatus.textContent='Payment confirmation sent. Your seats are pending verification.';
+ seatStatus.textContent='Creating your invoice PDF…';
+ sendInvoiceEmails(invoiceData).then(()=>{
+   seatStatus.insertAdjacentHTML('afterbegin','✓ Invoice emailed to you and the booking owner. ');
+   window.open('https://wa.me/918983416827?text='+msg,'_blank');
+ }).catch(error=>{
+   console.error('Invoice email error:',error);
+   seatStatus.insertAdjacentHTML('afterbegin','Payment confirmation saved, but automatic email is not configured yet. ');
+   window.open('https://wa.me/918983416827?text='+msg,'_blank');
+ });
 });
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod=btn.dataset.method||'upi';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
