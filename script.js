@@ -224,9 +224,9 @@ function startPayment(){
 }
 
 // EmailJS invoice delivery — fill these 3 public dashboard values after creating the template.
-const EMAILJS_PUBLIC_KEY='YOUR_EMAILJS_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID='YOUR_EMAILJS_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID='YOUR_EMAILJS_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY='XRqHC6_SUnYf_D9BI';
+const EMAILJS_SERVICE_ID='service_i9abvxs';
+const EMAILJS_TEMPLATE_ID='template_2vuz8wr';
 if(window.emailjs && EMAILJS_PUBLIC_KEY!=='YOUR_EMAILJS_PUBLIC_KEY'){
   emailjs.init({publicKey:EMAILJS_PUBLIC_KEY, blockHeadless:true, limitRate:{id:'pwg-invoice',throttle:1200}});
 }
