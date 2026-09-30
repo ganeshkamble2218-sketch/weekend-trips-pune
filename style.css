@@ -389,3 +389,9 @@ footer{padding:55px 7%;background:#0a120e!important}
   .booking-card h2,.payment-card h2{font-size:42px}
   .trust-strip{padding:27px 5%;grid-template-columns:repeat(2,1fr);gap:18px}
 }
+
+/* Payment controls: keep decorative layers behind tappable controls on mobile */
+.payment-card{position:relative;isolation:isolate}
+.payment-card:after{pointer-events:none;z-index:0}
+.payment-copy,.qr-box,.payment-methods,.payment-action,.payment-customer-email{position:relative;z-index:2}
+.pay-method,.payment-action .book-submit,.book-submit{position:relative;z-index:3;pointer-events:auto;touch-action:manipulation}
