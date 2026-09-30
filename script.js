@@ -212,15 +212,15 @@ function startPayment(){
  const upiUrl='upi://pay?'+params;
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
  const intentUrls={
-   gpay:'intent://upi/pay?'+params+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end',
-   phonepe:'intent://pay?'+params+'#Intent;scheme=phonepe;package=com.phonepe.app;end',
-   paytm:'intent://pay?'+params+'#Intent;scheme=paytmmp;package=net.one97.paytm;end',
+   gpay:'intent://pay?'+params+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end',
+   phonepe:'intent://pay?'+params+'#Intent;scheme=upi;package=com.phonepe.app;end',
+   paytm:'intent://pay?'+params+'#Intent;scheme=upi;package=net.one97.paytm;end',
    upi:upiUrl
  };
  const directUrls={
-   gpay:'tez://upi/pay?'+params,
-   phonepe:'phonepe://pay?'+params,
-   paytm:'paytmmp://pay?'+params,
+   gpay:upiUrl,
+   phonepe:upiUrl,
+   paytm:upiUrl,
    upi:upiUrl
  };
  const target=intentUrls[paymentMethod]||upiUrl;
