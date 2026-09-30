@@ -210,25 +210,40 @@ function startPayment(){
  const transactionRef='WTP'+Date.now();
  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
  const upiUrl='upi://pay?'+params;
- const appUrls={gpay:'tez://upi/pay?'+params,phonepe:'phonepe://pay?'+params,paytm:'paytmmp://pay?'+params,upi:upiUrl};
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
- const target=appUrls[paymentMethod]||upiUrl;
+ const intentUrls={
+   gpay:'intent://upi/pay?'+params+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end',
+   phonepe:'intent://pay?'+params+'#Intent;scheme=phonepe;package=com.phonepe.app;end',
+   paytm:'intent://pay?'+params+'#Intent;scheme=paytmmp;package=net.one97.paytm;end',
+   upi:upiUrl
+ };
+ const directUrls={
+   gpay:'tez://upi/pay?'+params,
+   phonepe:'phonepe://pay?'+params,
+   paytm:'paytmmp://pay?'+params,
+   upi:upiUrl
+ };
+ const target=intentUrls[paymentMethod]||upiUrl;
+ const directTarget=directUrls[paymentMethod]||upiUrl;
  const qr=document.querySelector('.qr-box img');
  if(qr) qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
  seatStatus.innerHTML='Opening '+labels[paymentMethod]+'…';
- // Try the selected app first, then automatically offer standard UPI if Android keeps the page open.
- const launcher=document.createElement('a');
- launcher.href=target;
- launcher.target='_self';
- launcher.style.display='none';
- document.body.appendChild(launcher);
- launcher.click();
- setTimeout(()=>launcher.remove(),1000);
+ // Launch directly from the real button tap. Programmatic hidden-link clicks are blocked
+ // by many mobile browsers, while an intent URI preserves the user gesture.
+ let leftPage=false;
+ const onVisibility=()=>{if(document.visibilityState==='hidden')leftPage=true;};
+ document.addEventListener('visibilitychange',onVisibility,{once:false});
+ try{
+   window.location.href=target;
+ }catch(e){
+   window.location.href=directTarget;
+ }
  setTimeout(()=>{
-   if(document.visibilityState==='visible'){
-     seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'" style="display:inline-block;margin-top:8px;font-weight:800;text-decoration:underline">Tap here to open UPI payment</a><br><small>If the app still does not open, scan the QR code.</small>';
+   document.removeEventListener('visibilitychange',onVisibility);
+   if(document.visibilityState==='visible'&&!leftPage){
+     seatStatus.innerHTML='Payment app did not open. <a href="'+directTarget+'" style="display:inline-block;margin-top:8px;font-weight:800;text-decoration:underline">Tap here to open '+labels[paymentMethod]+'</a><br><a href="'+upiUrl+'" style="display:inline-block;margin-top:6px;font-weight:800;text-decoration:underline">Open with any UPI app</a><br><small>You can also scan the QR code below.</small>';
    }
- },2200);
+ },1800);
 }
 
 // EmailJS invoice delivery — fill these 3 public dashboard values after creating the template.
