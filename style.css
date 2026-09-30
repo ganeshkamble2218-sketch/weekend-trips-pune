@@ -395,3 +395,5 @@ footer{padding:55px 7%;background:#0a120e!important}
 .payment-card:after{pointer-events:none;z-index:0}
 .payment-copy,.qr-box,.payment-methods,.payment-action,.payment-customer-email{position:relative;z-index:2}
 .pay-method,.payment-action .book-submit,.book-submit{position:relative;z-index:3;pointer-events:auto;touch-action:manipulation}
+
+.payment-email-top{margin:18px 0 22px;padding:16px 18px;background:#f1f2e8;border-radius:16px}.payment-email-top label{display:block}.payment-email-top input{margin-top:8px}.payment-email-top small{display:block;margin-top:8px;color:#667068;font-size:12px}.payment-email-top strong{font-size:14px}
