@@ -164,7 +164,7 @@ const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementByI
 function drawSeats(){if(!seatMap)return;seatMap.innerHTML='';SEAT_ROWS.forEach((row,i)=>{const div=document.createElement('div');div.className='seat-row '+(i>0&&i<6?'wide':'');row.forEach(n=>{const b=document.createElement('button');const isBooked=bookedSeats.includes(n),isSelected=selectedSeats.includes(n);b.type='button';b.className='seat '+(isBooked?'booked':isSelected?'selected':'');b.disabled=isBooked;b.innerHTML='<span>'+(isBooked?'×':'▣')+'</span><b>'+n+'</b>';b.onclick=()=>{if(isBooked)return;selectedSeats=selectedSeats.includes(n)?selectedSeats.filter(x=>x!==n):[...selectedSeats,n].sort((a,b)=>a-b);drawSeats();updateSeatTotal()};div.appendChild(b)});seatMap.appendChild(div)});}
 function updateSeatTotal(){seatTotal.textContent='₹'+(selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0)).toLocaleString('en-IN');}
 async function loadBookedSeats(){if(!seatDate.value)return;seatStatus.textContent='Loading seat status…';try{const q='https://kbistbtecmazmkhmgowq.supabase.co/rest/v1/seat_blocks?select=seat_number&trip=eq.'+encodeURIComponent(seatTrip.value)+'&travel_date=eq.'+seatDate.value;const r=await fetch(q,{headers:{apikey:'sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s',Authorization:'Bearer sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s'}});if(!r.ok)throw new Error();const blocked=await r.json();bookedSeats=blocked.map(x=>Number(x.seat_number));selectedSeats=selectedSeats.filter(n=>!bookedSeats.includes(n));fillPickupSelect('seatPickup',seatTrip?.value||'Kaas Pathar');fillPickupSelect('pickup',seatTrip?.value||'Kaas Pathar');drawSeats();updateSeatTotal();seatStatus.textContent='';}catch(e){seatStatus.textContent='Could not load live seats. Please try again.';}}
-seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);populateWeekendDates();loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{if(seatDate.value&&!isWeekendDate(seatDate.value)){seatStatus.textContent=(trip==='Kaas Pathar'||trip==='Kokan')?'Please select a Sunday.':(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay')?'Please select a Saturday.':'Please select a valid trip date.';seatDate.value='';selectedSeats=[];drawSeats();updateSeatTotal();return;}selectedSeats=[];loadBookedSeats();updateSeatTotal()});
+seatTrip?.addEventListener('change',()=>{selectedSeats=[];fillPickupSelect('seatPickup',seatTrip.value);populateWeekendDates();loadBookedSeats();updateSeatTotal()});seatDate?.addEventListener('change',()=>{if(seatDate.value&&!isWeekendDate(seatDate.value)){const currentTrip=seatTrip?.value||'';seatStatus.textContent=(currentTrip==='Kaas Pathar'||currentTrip==='Kokan')?'Please select a Sunday.':(currentTrip==='Harihareshwar – Diveagar'||currentTrip==='Matheran'||currentTrip==='Mahabaleshwar'||currentTrip==='Kaas Pathar + Mahabaleshwar Stay')?'Please select a Saturday.':'Please select a valid trip date.';seatDate.value='';selectedSeats=[];drawSeats();updateSeatTotal();return;}selectedSeats=[];loadBookedSeats();updateSeatTotal()});
 function updateOldPickupAddress(value){
  const box=document.getElementById('pickupAddressOld'); if(!box)return;
  if(!value){box.innerHTML='';return;}
@@ -198,24 +198,28 @@ function updatePaymentUI(){const x=getPaymentTotals();if(paymentAmount)paymentAm
 function startPayment(){
  const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim(),email=document.getElementById('seatEmail')?.value.trim(),trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
- if(!date||!name||!phone||!email||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose date, seats, name, mobile number, email and pickup first.';return;} if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address for your invoice.';return;}
+ if(!date||!name||!phone||!email||!pickup||!selectedSeats.length){seatStatus.textContent='Please choose date, seats, name, mobile number, email and pickup first.';return;}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){seatStatus.textContent='Please enter a valid email address for your invoice.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent=(trip==='Kokan'||trip==='Kaas Pathar')?'Please select a Sunday.':(trip==='Mahabaleshwar'||trip==='Harihareshwar – Diveagar'||trip==='Kaas Pathar + Mahabaleshwar Stay')?'Please select a Saturday.':'Please select a Saturday or Sunday.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
  const transactionRef='WTP'+Date.now();
  const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
  const upiUrl='upi://pay?'+params;
- const appUrls={
-   gpay:'tez://upi/pay?'+params,
-   phonepe:'phonepe://pay?'+params,
-   paytm:'paytmmp://pay?'+params,
-   upi:upiUrl
- };
+ const appUrls={gpay:'tez://upi/pay?'+params,phonepe:'phonepe://pay?'+params,paytm:'paytmmp://pay?'+params,upi:upiUrl};
  const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
  const target=appUrls[paymentMethod]||upiUrl;
  const qr=document.querySelector('.qr-box img');
  if(qr)qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
  seatStatus.innerHTML='Opening '+labels[paymentMethod]+'…';
- window.location.href=target;
+ // Use a real anchor click for Android/iOS deep-link handling, then provide a generic UPI fallback.
+ const launcher=document.createElement('a');
+ launcher.href=target;
+ launcher.target='_self';
+ launcher.rel='noopener';
+ launcher.style.display='none';
+ document.body.appendChild(launcher);
+ launcher.click();
+ setTimeout(()=>launcher.remove(),500);
  setTimeout(()=>{
    if(document.visibilityState==='visible'){
      seatStatus.innerHTML='Payment app did not open. <a href="'+upiUrl+'" style="font-weight:700">Tap here to open UPI</a> or scan the QR code below.';
