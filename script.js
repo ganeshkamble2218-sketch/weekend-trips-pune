@@ -191,56 +191,120 @@ document.getElementById('pickup')?.addEventListener('change',e=>updateOldPickupA
 document.getElementById('seatPickup')?.addEventListener('change',e=>updatePickupAddress(e.target.value));
 populateOldBookingDates();
 const paymentAmount=document.getElementById('paymentAmount'),payNowBtn=document.getElementById('payNowBtn');
-let paymentMethod='upi';
+let paymentMethod='cashfree';
+const SUPABASE_FUNCTION_URL='https://kbistbtecmazmkhmgowq.supabase.co/functions/v1';
+const SUPABASE_ANON_KEY='sb_publishable_LccIloPnyFIfSiFY58Jzyg_xQ4Dm22s';
+
 function openSelectedUPIApp(method){paymentMethod=method;updatePaymentUI();}
-function getPaymentTotals(){const base=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);const gst=Math.round(base*0.05);const total=base+gst;const plan=document.querySelector('input[name="paymentPlan"]:checked')?.value||'50';const payNow=plan==='50'?Math.round(total/2):total;return{base,gst,total,plan,payNow};}
-function updatePaymentUI(){const x=getPaymentTotals();const nativePay=document.getElementById('payNowBtn');if(nativePay){const ref='WTP'+Date.now();nativePay.href='upi://pay?pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(x.payNow)+'&cu=INR&tr='+encodeURIComponent(ref)+'&tn='+encodeURIComponent((seatTrip?.value||'Trip')+' '+x.plan+' payment');}if(paymentAmount)paymentAmount.textContent='₹'+x.total.toLocaleString('en-IN');document.getElementById('basePaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.base.toLocaleString('en-IN')));document.getElementById('gstPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.gst.toLocaleString('en-IN')));document.getElementById('advancePaymentAmount')?.replaceChildren(document.createTextNode('₹'+Math.round(x.total/2).toLocaleString('en-IN')));document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));if(payNowBtn)payNowBtn.textContent='Pay with '+({upi:'UPI',gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm'}[paymentMethod]||'UPI')+' →';}}
-function startPayment(){
+function getPaymentTotals(){
+ const base=selectedSeats.length*(SEAT_PRICES[seatTrip.value]||0);
+ const gst=Math.round(base*0.05);
+ const total=base+gst;
+ const plan=document.querySelector('input[name="paymentPlan"]:checked')?.value||'50';
+ const payNow=plan==='50'?Math.round(total/2):total;
+ return{base,gst,total,plan,payNow};
+}
+function updatePaymentUI(){
+ const x=getPaymentTotals();
+ if(paymentAmount)paymentAmount.textContent='₹'+x.total.toLocaleString('en-IN');
+ document.getElementById('basePaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.base.toLocaleString('en-IN')));
+ document.getElementById('gstPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.gst.toLocaleString('en-IN')));
+ document.getElementById('advancePaymentAmount')?.replaceChildren(document.createTextNode('₹'+Math.round(x.total/2).toLocaleString('en-IN')));
+ document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));
+ document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));
+ if(payNowBtn)payNowBtn.textContent='Pay securely with Cashfree →';
+}
+
+async function startPayment(){
  const name=document.getElementById('seatName')?.value.trim();
  const phone=document.getElementById('seatPhone')?.value.trim();
-const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
+ const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value;
  const payment=getPaymentTotals();
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile and pickup first.';return;}
+ if(!/^\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
  if(!isWeekendDate(date)){seatStatus.textContent='Please select the correct trip day.';return;}
  if(!payment.total){seatStatus.textContent='Please select at least one seat.';return;}
- const transactionRef='WTP'+Date.now();
- const params='pa='+encodeURIComponent('ganeshk1234567amble-2@oksbi')+'&pn='+encodeURIComponent('Pune Weekend Getaways')+'&am='+encodeURIComponent(payment.payNow)+'&cu=INR&tr='+encodeURIComponent(transactionRef)+'&tn='+encodeURIComponent(trip+' '+payment.plan+' payment');
- const upiUrl='upi://pay?'+params;
- const labels={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'};
- const intentUrls={
-   gpay:'intent://pay?'+params+'#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end',
-   phonepe:'intent://pay?'+params+'#Intent;scheme=upi;package=com.phonepe.app;end',
-   paytm:'intent://pay?'+params+'#Intent;scheme=upi;package=net.one97.paytm;end',
-   upi:upiUrl
- };
- const directUrls={
-   gpay:upiUrl,
-   phonepe:upiUrl,
-   paytm:upiUrl,
-   upi:upiUrl
- };
- const target=intentUrls[paymentMethod]||upiUrl;
- const directTarget=directUrls[paymentMethod]||upiUrl;
- const qr=document.querySelector('.qr-box img');
- if(qr) qr.src='https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data='+encodeURIComponent(upiUrl);
- seatStatus.innerHTML='Opening '+labels[paymentMethod]+'…';
- // Launch directly from the real button tap. Programmatic hidden-link clicks are blocked
- // by many mobile browsers, while an intent URI preserves the user gesture.
- let leftPage=false;
- const onVisibility=()=>{if(document.visibilityState==='hidden')leftPage=true;};
- document.addEventListener('visibilitychange',onVisibility,{once:false});
+ if(!window.Cashfree){seatStatus.textContent='Secure payment is loading. Please try again in a moment.';return;}
+
+ seatStatus.textContent='Creating secure payment…';
+ payNowBtn.disabled=true;
  try{
-   window.location.href=target;
+   const r=await fetch(SUPABASE_FUNCTION_URL+'/cashfree-create-order',{
+     method:'POST',
+     headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+     body:JSON.stringify({trip,date,name,phone,pickup,seats:[...selectedSeats],plan:payment.plan})
+   });
+   const data=await r.json().catch(()=>({}));
+   if(!r.ok||!data.paymentSessionId)throw new Error(data.error||'Could not start Cashfree payment.');
+   sessionStorage.setItem('pwg_cashfree_pending',JSON.stringify({
+     orderId:data.orderId,trip,date,name,phone,pickup,seats:[...selectedSeats],plan:payment.plan,
+     pricing:data.pricing,createdAt:new Date().toISOString()
+   }));
+   const cashfree=window.Cashfree({mode:data.environment==='production'?'production':'sandbox'});
+   seatStatus.textContent='Opening secure Cashfree checkout…';
+   await cashfree.checkout({paymentSessionId:data.paymentSessionId,redirectTarget:'_self'});
  }catch(e){
-   window.location.href=directTarget;
+   console.error(e);
+   seatStatus.textContent='Payment could not be started. '+(e?.message||'Please try again.');
+   payNowBtn.disabled=false;
  }
- setTimeout(()=>{
-   document.removeEventListener('visibilitychange',onVisibility);
-   if(document.visibilityState==='visible'&&!leftPage){
-     seatStatus.innerHTML='Payment app did not open. <a href="'+directTarget+'" style="display:inline-block;margin-top:8px;font-weight:800;text-decoration:underline">Tap here to open '+labels[paymentMethod]+'</a><br><a href="'+upiUrl+'" style="display:inline-block;margin-top:6px;font-weight:800;text-decoration:underline">Open with any UPI app</a><br><small>You can also scan the QR code below.</small>';
-   }
- },1800);
 }
+
+async function verifyCashfreeReturn(){
+ const params=new URLSearchParams(window.location.search);
+ const orderId=params.get('order_id');
+ const pendingRaw=sessionStorage.getItem('pwg_cashfree_pending');
+ if(!orderId||!pendingRaw)return;
+ let pending;try{pending=JSON.parse(pendingRaw)}catch{return;}
+ if(pending.orderId!==orderId)return;
+ const status=document.getElementById('seatStatus');
+ if(status)status.textContent='Verifying your payment securely…';
+ try{
+   const r=await fetch(SUPABASE_FUNCTION_URL+'/cashfree-verify-payment',{
+     method:'POST',
+     headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},
+     body:JSON.stringify({orderId,trip:pending.trip,date:pending.date,name:pending.name,phone:pending.phone,pickup:pending.pickup,seats:pending.seats,plan:pending.plan})
+   });
+   const data=await r.json().catch(()=>({}));
+   if(data.paid&&data.status==='SUCCESS'){
+     sessionStorage.removeItem('pwg_cashfree_pending');
+     if(status)status.innerHTML='✓ Payment successful! Your selected seats are confirmed. Booking ID: <strong>'+orderId+'</strong>';
+     const msg='Hello Pune Weekend Getaways!%0A%0A*Cashfree Payment Successful*%0ABooking ID: '+encodeURIComponent(orderId)+'%0AName: '+encodeURIComponent(pending.name)+'%0AMobile: '+encodeURIComponent(pending.phone)+'%0ATrip: '+encodeURIComponent(pending.trip)+'%0ATravel Date: '+encodeURIComponent(pending.date)+'%0ASeats: '+encodeURIComponent(pending.seats.join(', '))+'%0APickup: '+encodeURIComponent(pending.pickup)+'%0AAmount Paid: ₹'+encodeURIComponent(data.booking?.pricing?.amountPaid||pending.pricing?.payNow||'')+'%0A%0APlease send my booking confirmation.';
+     window.history.replaceState({},document.title,window.location.pathname);
+     window.open('https://wa.me/918983416827?text='+msg,'_blank');
+   }else{
+     if(status)status.textContent=data.message||'Payment was not completed. No seat has been confirmed.';
+     window.history.replaceState({},document.title,window.location.pathname);
+   }
+ }catch(e){
+   if(status)status.textContent='Payment verification is temporarily unavailable. Please contact us with booking ID '+orderId+'.';
+ }
+}
+
+document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));
+ btn.classList.add('active'); paymentMethod='cashfree'; updatePaymentUI();
+}));
+payNowBtn?.addEventListener('click',startPayment);
+document.getElementById('seatBookBtn')?.addEventListener('click',()=>{
+ const paymentSection=document.getElementById('payment'),status=document.getElementById('seatStatus'),missing=[];
+ if(!seatDate?.value)missing.push('travel date');
+ if(!selectedSeats.length)missing.push('at least one seat');
+ if(!document.getElementById('seatName')?.value.trim())missing.push('name');
+ if(!document.getElementById('seatPhone')?.value.trim())missing.push('mobile number');
+ if(!document.getElementById('seatPickup')?.value)missing.push('pickup location');
+ if(missing.length){
+   if(status)status.textContent='Please complete: '+missing.join(', ')+'.';
+   const first=missing[0],target=first==='travel date'?seatDate:first==='at least one seat'?document.getElementById('seatMap'):first==='name'?document.getElementById('seatName'):first==='mobile number'?document.getElementById('seatPhone'):document.getElementById('seatPickup');
+   target?.scrollIntoView({behavior:'smooth',block:'center'});target?.focus?.();return;
+ }
+ updatePaymentUI();
+ paymentSection?.scrollIntoView({behavior:'smooth',block:'start'});
+ setTimeout(()=>document.getElementById('payNowBtn')?.focus(),650);
+});
+populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
+document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
+verifyCashfreeReturn();
 
 function buildInvoicePdf(invoice){
   if(!window.jspdf?.jsPDF) throw new Error('Invoice PDF library is not available.');
