@@ -360,8 +360,8 @@ document.getElementById('seatBookBtn')?.addEventListener('click',()=>{
  updatePaymentUI();
  if(paymentSection){
    paymentSection.scrollIntoView({behavior:'smooth',block:'start'});
-   setTimeout(()=>document.getElementById('payNowBtn')?.focus(),650);
  }
+ startPayment();
 });
 populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
 
