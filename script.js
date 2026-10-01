@@ -217,12 +217,12 @@ async function startPayment(){
  const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim();
  const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value,payment=getPaymentTotals();
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile and pickup first.';return;}
- if(!/^\\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
+ if(!/^\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
  if(!isWeekendDate(date)||!payment.total){seatStatus.textContent='Please select the correct trip day and at least one seat.';return;}
  if(!window.Razorpay){seatStatus.textContent='Secure payment is loading. Please try again.';return;}
  seatStatus.textContent='Creating secure Razorpay payment…';payNowBtn.disabled=true;
  try{
-  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-create-order',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},body:JSON.stringify({tripName:trip,paymentType:payment.plan})});
+  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-create-order',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},body:JSON.stringify({tripName:trip==='Harihareshwar – Diveagar'?'Harihareshwar-Diveagar':trip,paymentType:payment.plan,seatCount:selectedSeats.length})});
   const data=await r.json().catch(()=>({}));
   if(!r.ok||!data.order_id)throw new Error(data.error||'Could not create Razorpay order.');
   const pricing={base:data.base_price,gst:data.gst,total:data.total,payNow:data.amount/100,plan:data.payment_type};
