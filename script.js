@@ -307,7 +307,7 @@ async function verifyRazorpayPayment(result){
  }catch(e){console.error('Razorpay verification error:',e);seatStatus.textContent='Payment may have succeeded, but verification needs attention. Contact us with Booking ID '+result.razorpay_order_id+'.';if(payNowBtn)payNowBtn.disabled=false;}
 }
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod='razorpay';updatePaymentUI();}));
-if(payNowBtn)payNowBtn.onclick=startPayment;
+if(payNowBtn){payNowBtn.disabled=false;payNowBtn.removeAttribute('disabled');payNowBtn.style.pointerEvents='auto';payNowBtn.style.position='relative';payNowBtn.style.zIndex='5';payNowBtn.addEventListener('click',function(e){e.preventDefault();startPayment();});}window.startPayment=startPayment;
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{const paymentSection=document.getElementById('payment'),status=document.getElementById('seatStatus'),missing=[];if(!seatDate?.value)missing.push('travel date');if(!selectedSeats.length)missing.push('at least one seat');if(!document.getElementById('seatName')?.value.trim())missing.push('name');if(!document.getElementById('seatPhone')?.value.trim())missing.push('mobile number');if(!document.getElementById('seatPickup')?.value)missing.push('pickup location');if(missing.length){status.textContent='Please complete: '+missing.join(', ')+'.';return;}updatePaymentUI();paymentSection?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>startPayment(),150);});
 try{
  const requestedTrip=new URLSearchParams(window.location.search).get('trip')||sessionStorage.getItem('pwg_selected_trip');
