@@ -28,10 +28,11 @@ function populateWeekendDates(){
 }
 function isWeekendDate(value){
  if(!value)return false;
- const d=new Date(value+'T00:00:00');
  const trip=document.getElementById('tripSeat')?.value||'';
+ if(trip==='Kokan 1 Night / 2 Days')return value==='2026-10-24';
+ const d=new Date(value+'T00:00:00');
  if(trip==='Kaas Pathar'||trip==='Kokan')return d.getDay()===0;
- if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay'||trip==='Kokan 1 Night / 2 Days')return d.getDay()===6;
+ if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay')return d.getDay()===6;
  return false;
 }
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;populateWeekendDates();seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
@@ -315,7 +316,9 @@ try{
   sessionStorage.removeItem('pwg_selected_trip');
  }
 }catch(e){}
-populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
+populateWeekendDates();
+try{const date=document.getElementById('seatDate'),trip=document.getElementById('tripSeat');if(trip?.value==='Kokan 1 Night / 2 Days'&&date){date.innerHTML='<option value="2026-10-24">Saturday — 24 Oct 2026</option>';date.value='2026-10-24';}}catch(e){}
+drawSeats();updateSeatTotal();updatePaymentUI();
 document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
 
 function buildInvoicePdf(invoice){
