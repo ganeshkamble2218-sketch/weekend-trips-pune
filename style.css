@@ -417,3 +417,6 @@ footer{padding:55px 7%;background:#0a120e!important}
 .qr-fallback-label span{font-size:12px;line-height:1.5;color:#667068}
 .qr-security-note{margin-top:14px;padding:11px 12px;border-radius:12px;background:#eef0df;color:#4d5b38;font-size:11px;line-height:1.5}
 @media(max-width:700px){.manual-payment-fallback{padding:17px 15px}.manual-payment-heading h3{font-size:20px}.manual-payment-whatsapp{font-size:12px}}
+
+/* Explicit mobile payment tap target */
+.payment-action{position:relative!important;z-index:9999!important;isolation:isolate!important;pointer-events:auto!important}.payment-action .book-submit{display:block!important;position:relative!important;z-index:99999!important;min-height:60px!important;width:100%!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important}.manual-payment-fallback{z-index:1!important}
