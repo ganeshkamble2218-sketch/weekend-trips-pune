@@ -212,6 +212,18 @@ function updatePaymentUI(){
  document.getElementById('fullPaymentAmount')?.replaceChildren(document.createTextNode('₹'+x.total.toLocaleString('en-IN')));
  document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));
  if(payNowBtn)payNowBtn.textContent='Pay securely with Razorpay →';
+ const manualWhatsApp=document.getElementById('manualPaymentWhatsApp');
+ if(manualWhatsApp){
+  const trip=seatTrip?.value||'Not selected';
+  const date=seatDate?.value||'Not selected';
+  const pickup=document.getElementById('seatPickup')?.value||'Not selected';
+  const name=document.getElementById('seatName')?.value.trim()||'Not entered';
+  const phone=document.getElementById('seatPhone')?.value.trim()||'Not entered';
+  const seats=selectedSeats.length?selectedSeats.join(', '):'Not selected';
+  const planLabel=x.plan==='50'?'50% advance':'full payment';
+  const msg='Hello Pune Weekend Getaways, I have paid by scanning the UPI QR code and would like to confirm my booking.\nTrip: '+trip+'\nTravel date: '+date+'\nPickup: '+pickup+'\nName: '+name+'\nMobile: '+phone+'\nSeats: '+seats+'\nPayment option: '+planLabel+'\nAmount paid: ₹'+x.payNow.toLocaleString('en-IN')+'\nUPI transaction ID/reference: [please add here]. I understand the booking is confirmed after your team verifies the payment.';
+  manualWhatsApp.href='https://wa.me/918983416827?text='+encodeURIComponent(msg);
+ }
 }
 async function ensureRazorpayLoaded(){
  if(window.Razorpay)return true;
