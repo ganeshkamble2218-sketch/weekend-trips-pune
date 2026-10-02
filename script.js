@@ -213,56 +213,65 @@ function updatePaymentUI(){
  document.getElementById('payNowAmount')?.replaceChildren(document.createTextNode('₹'+x.payNow.toLocaleString('en-IN')));
  if(payNowBtn)payNowBtn.textContent='Pay securely with Razorpay →';
 }
+async function ensureRazorpayLoaded(){
+ if(window.Razorpay)return true;
+ return await new Promise(resolve=>{
+  const existing=document.querySelector('script[data-rzp-loader="1"]');
+  const script=existing||document.createElement('script');
+  if(!existing){script.src='https://checkout.razorpay.com/v1/checkout.js';script.async=true;script.dataset.rzpLoader='1';document.head.appendChild(script);}
+  script.addEventListener('load',()=>resolve(!!window.Razorpay),{once:true});
+  script.addEventListener('error',()=>resolve(false),{once:true});
+  if(existing&&window.Razorpay)resolve(true);
+  if(existing&&!window.Razorpay){const check=()=>resolve(!!window.Razorpay);setTimeout(check,3000);}
+ });
+}
 async function startPayment(){
  const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim();
  const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value,payment=getPaymentTotals();
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile and pickup first.';return;}
- if(!/^\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
+ if(!/^\\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
  if(!isWeekendDate(date)||!payment.total){seatStatus.textContent='Please select the correct trip day and at least one seat.';return;}
- if(!window.Razorpay){seatStatus.textContent='Secure payment is loading. Please try again.';return;}
- seatStatus.textContent='Creating secure Razorpay payment…';payNowBtn.disabled=true;
+ if(payNowBtn)payNowBtn.disabled=true;
+ seatStatus.textContent='Loading secure Razorpay checkout…';
  try{
-  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-create-order',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},body:JSON.stringify({tripName:trip==='Harihareshwar – Diveagar'?'Harihareshwar-Diveagar':trip,paymentType:payment.plan,seatCount:selectedSeats.length})});
+  const loaded=await ensureRazorpayLoaded();
+  if(!loaded)throw new Error('Razorpay Checkout could not load. Please open this page in Chrome and try again.');
+  seatStatus.textContent='Creating secure Razorpay payment…';
+  const payload={trip,date,name,phone,pickup,seats:[...selectedSeats],plan:payment.plan,tripName:trip==='Harihareshwar – Diveagar'?'Harihareshwar-Diveagar':trip,paymentType:payment.plan,seatCount:selectedSeats.length};
+  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-create-order',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify(payload)});
   const data=await r.json().catch(()=>({}));
-  if(!r.ok||!data.order_id)throw new Error(data.error||'Could not create Razorpay order.');
-  const pricing={base:data.base_price,gst:data.gst,total:data.total,payNow:data.amount/100,plan:data.payment_type};
-  sessionStorage.setItem('pwg_razorpay_pending',JSON.stringify({orderId:data.order_id,trip,date,name,phone,pickup,seats:[...selectedSeats],plan:payment.plan,pricing}));
-  const options={key:data.key_id,amount:data.amount,currency:data.currency||'INR',name:'Pune Weekend Getaways',description:trip+' | '+date,order_id:data.order_id,prefill:{name,contact:phone},notes:{trip,travel_date:date,seats:selectedSeats.join(','),payment_plan:payment.plan,pickup},theme:{color:'#111827'},handler:verifyRazorpayPayment,modal:{ondismiss:()=>{seatStatus.textContent='Payment window closed. Your seats are not confirmed.';payNowBtn.disabled=false;}}};
-  seatStatus.textContent='Opening secure Razorpay checkout…';new window.Razorpay(options).open();
- }catch(e){console.error(e);seatStatus.textContent='Payment could not be started. '+(e?.message||'Please try again.');payNowBtn.disabled=false;}
+  const orderId=data.orderId||data.order_id;
+  const keyId=data.keyId||data.key_id;
+  const amount=data.amount;
+  if(!r.ok||!orderId||!keyId||!amount)throw new Error(data.error||data.message||'Could not create Razorpay order (HTTP '+r.status+').');
+  const pricing=data.pricing||{base:data.base_price??payment.base,gst:data.gst??payment.gst,total:data.total??payment.total,payNow:amount/100,plan:data.payment_type||payment.plan};
+  sessionStorage.setItem('pwg_razorpay_pending',JSON.stringify({orderId,trip,date,name,phone,pickup,seats:[...selectedSeats],plan:payment.plan,pricing}));
+  const options={key:keyId,amount,currency:data.currency||'INR',name:'Pune Weekend Getaways',description:trip+' | '+date,order_id:orderId,prefill:{name,contact:phone},notes:{trip,travel_date:date,seats:selectedSeats.join(','),payment_plan:payment.plan,pickup},theme:{color:'#243127'},handler:verifyRazorpayPayment,modal:{ondismiss:()=>{seatStatus.textContent='Payment window closed. Your seats are not confirmed.';if(payNowBtn)payNowBtn.disabled=false;}}};
+  seatStatus.textContent='Opening secure Razorpay checkout…';
+  const checkout=new window.Razorpay(options);
+  checkout.on('payment.failed',response=>{console.error('Razorpay payment failed',response?.error);seatStatus.textContent=response?.error?.description||'Razorpay payment failed. Please try another method.';if(payNowBtn)payNowBtn.disabled=false;});
+  checkout.open();
+ }catch(e){console.error('Razorpay checkout error:',e);seatStatus.textContent='Payment could not be started: '+(e?.message||'Please try again.');if(payNowBtn)payNowBtn.disabled=false;}
 }
 async function verifyRazorpayPayment(result){
  const raw=sessionStorage.getItem('pwg_razorpay_pending');if(!raw)return;
  let p;try{p=JSON.parse(raw)}catch{return;}
  seatStatus.textContent='Verifying your payment securely…';
  try{
-  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-verify-payment',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY},body:JSON.stringify({razorpay_payment_id:result.razorpay_payment_id,razorpay_order_id:result.razorpay_order_id,razorpay_signature:result.razorpay_signature,amount:Math.round((p.pricing?.payNow||0)*100)})});
+  const verifyPayload={razorpayOrderId:result.razorpay_order_id,razorpayPaymentId:result.razorpay_payment_id,razorpaySignature:result.razorpay_signature,trip:p.trip,date:p.date,name:p.name,phone:p.phone,pickup:p.pickup,seats:p.seats,plan:p.plan,razorpay_order_id:result.razorpay_order_id,razorpay_payment_id:result.razorpay_payment_id,razorpay_signature:result.razorpay_signature,amount:Math.round((p.pricing?.payNow||0)*100)};
+  const r=await fetch(SUPABASE_FUNCTION_URL+'/razorpay-verify-payment',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY},body:JSON.stringify(verifyPayload)});
   const data=await r.json().catch(()=>({}));
-  if(!r.ok||!data.success||!data.verified){
-   seatStatus.textContent=data.error||data.message||'Payment could not be verified. No seat has been confirmed.';payNowBtn.disabled=false;return;
-  }
-
-  // Confirm the selected seats only after payment verification.
-  const rows=p.seats.map(seat=>({trip:p.trip,travel_date:p.date,seat_number:seat}));
-  const seatResponse=await fetch('https://kbistbtecmazmkhmgowq.supabase.co/rest/v1/seat_blocks',{
-   method:'POST',
-   headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Prefer':'resolution=ignore-duplicates,return=representation'},
-   body:JSON.stringify(rows)
-  });
-  const seatRows=await seatResponse.json().catch(()=>[]);
-  if(!seatResponse.ok||!Array.isArray(seatRows)||seatRows.length!==p.seats.length){
-   seatStatus.textContent='Payment succeeded, but the seats could not be confirmed automatically. Please contact us with Booking ID '+result.razorpay_order_id+'.';
-   payNowBtn.disabled=false;return;
-  }
-
+  const verified=!!(data.paid||data.success&&data.verified);
+  if(!r.ok||!verified){seatStatus.textContent=data.error||data.message||'Payment could not be verified. No booking confirmation was received.';if(payNowBtn)payNowBtn.disabled=false;return;}
   sessionStorage.removeItem('pwg_razorpay_pending');
   bookedSeats=[...new Set([...bookedSeats,...p.seats])];
   selectedSeats=[];drawSeats();updateSeatTotal();
-  seatStatus.innerHTML='✓ Payment successful! Your selected seats are confirmed. Booking ID: <strong>'+result.razorpay_order_id+'</strong>';
-  const amountPaid=data.amount?Number(data.amount)/100:(p.pricing?.payNow||0);
-  const msg='Hello Pune Weekend Getaways!%0A%0A*Razorpay Payment Successful*%0ABooking ID: '+encodeURIComponent(result.razorpay_order_id)+'%0APayment ID: '+encodeURIComponent(result.razorpay_payment_id)+'%0AName: '+encodeURIComponent(p.name)+'%0AMobile: '+encodeURIComponent(p.phone)+'%0ATrip: '+encodeURIComponent(p.trip)+'%0ATravel Date: '+encodeURIComponent(p.date)+'%0ASeats: '+encodeURIComponent(p.seats.join(', '))+'%0APickup: '+encodeURIComponent(p.pickup)+'%0AAmount Paid: ₹'+encodeURIComponent(amountPaid);
+  const bookingId=result.razorpay_order_id;
+  seatStatus.textContent='✓ Payment verified. Booking ID: '+bookingId+'. Please save this ID.';
+  const amountPaid=data.booking?.pricing?.amountPaid??data.amount/100??p.pricing?.payNow??0;
+  const msg='Hello Pune Weekend Getaways!%0A%0A*Razorpay Payment Successful*%0ABooking ID: '+encodeURIComponent(bookingId)+'%0APayment ID: '+encodeURIComponent(result.razorpay_payment_id)+'%0AName: '+encodeURIComponent(p.name)+'%0AMobile: '+encodeURIComponent(p.phone)+'%0ATrip: '+encodeURIComponent(p.trip)+'%0ATravel Date: '+encodeURIComponent(p.date)+'%0ASeats: '+encodeURIComponent(p.seats.join(', '))+'%0APickup: '+encodeURIComponent(p.pickup)+'%0AAmount Paid: ₹'+encodeURIComponent(amountPaid);
   window.open('https://wa.me/918983416827?text='+msg,'_blank');
- }catch(e){console.error(e);seatStatus.textContent='Payment was verified, but booking confirmation needs attention. Please contact us with Booking ID '+result.razorpay_order_id+'.';payNowBtn.disabled=false;}
+ }catch(e){console.error('Razorpay verification error:',e);seatStatus.textContent='Payment may have succeeded, but verification needs attention. Contact us with Booking ID '+result.razorpay_order_id+'.';if(payNowBtn)payNowBtn.disabled=false;}
 }
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod='razorpay';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
