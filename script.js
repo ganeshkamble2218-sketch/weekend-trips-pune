@@ -303,6 +303,18 @@ async function verifyRazorpayPayment(result){
 document.querySelectorAll('.pay-method').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.pay-method').forEach(b=>b.classList.remove('active'));btn.classList.add('active');paymentMethod='razorpay';updatePaymentUI();}));
 payNowBtn?.addEventListener('click',startPayment);
 document.getElementById('seatBookBtn')?.addEventListener('click',()=>{const paymentSection=document.getElementById('payment'),status=document.getElementById('seatStatus'),missing=[];if(!seatDate?.value)missing.push('travel date');if(!selectedSeats.length)missing.push('at least one seat');if(!document.getElementById('seatName')?.value.trim())missing.push('name');if(!document.getElementById('seatPhone')?.value.trim())missing.push('mobile number');if(!document.getElementById('seatPickup')?.value)missing.push('pickup location');if(missing.length){status.textContent='Please complete: '+missing.join(', ')+'.';return;}updatePaymentUI();paymentSection?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>startPayment(),150);});
+try{
+ const requestedTrip=new URLSearchParams(window.location.search).get('trip')||sessionStorage.getItem('pwg_selected_trip');
+ if(requestedTrip==='Kokan 1 Night / 2 Days'){
+  const seatTrip=document.getElementById('tripSeat'),tripSelect=document.getElementById('trip');
+  if(seatTrip)seatTrip.value=requestedTrip;
+  if(tripSelect){const option=[...tripSelect.options].find(o=>o.text.startsWith(requestedTrip));if(option)tripSelect.value=option.value;}
+  fillPickupSelect('seatPickup',requestedTrip);fillPickupSelect('pickup',requestedTrip);
+  const title=document.getElementById('selectedTripTitle');if(title)title.textContent=requestedTrip;
+  const box=document.getElementById('seatBooking');if(box){box.hidden=false;box.classList.add('open');}
+  sessionStorage.removeItem('pwg_selected_trip');
+ }
+}catch(e){}
 populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
 document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
 
