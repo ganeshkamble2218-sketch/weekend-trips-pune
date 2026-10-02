@@ -397,3 +397,23 @@ footer{padding:55px 7%;background:#0a120e!important}
 .pay-method,.payment-action .book-submit,.book-submit{position:relative;z-index:3;pointer-events:auto;touch-action:manipulation}
 
 .payment-email-top{margin:18px 0 22px;padding:16px 18px;background:#f1f2e8;border-radius:16px}.payment-email-top label{display:block}.payment-email-top input{margin-top:8px}.payment-email-top small{display:block;margin-top:8px;color:#667068;font-size:12px}.payment-email-top strong{font-size:14px}
+
+/* Alternative QR payment and WhatsApp confirmation */
+.manual-payment-fallback{margin:22px 0 8px;padding:20px;border:1px solid #dfe6cc;border-radius:20px;background:linear-gradient(145deg,#f8faef,#eef2df);box-shadow:0 10px 28px rgba(23,36,28,.06)}
+.manual-payment-heading{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.manual-payment-icon{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:14px;background:#dce96d;color:#17241c;font-size:25px;font-weight:900}
+.manual-payment-heading .eyebrow{margin:0 0 4px;font-size:10px;color:#758324;letter-spacing:1.7px}
+.manual-payment-heading h3{margin:0;font-size:22px;letter-spacing:-.4px;color:#17241c}
+.manual-payment-fallback>p{margin:10px 0 16px;color:#586258;font-size:13px;line-height:1.65}
+.manual-payment-steps{display:grid;gap:10px;margin:16px 0 18px}
+.manual-payment-steps span{display:flex;align-items:flex-start;gap:10px;color:#344237;font-size:12px;line-height:1.5}
+.manual-payment-steps b{width:23px;height:23px;flex:none;display:grid;place-items:center;border-radius:50%;background:#17241c;color:#e3ee77;font-size:11px}
+.manual-payment-whatsapp{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:15px 14px;border-radius:14px;background:#17241c;color:#fff;text-decoration:none;font-weight:800;font-size:13px;line-height:1.4;text-align:center;box-shadow:0 7px 18px rgba(23,36,28,.14)}
+.manual-payment-whatsapp span{font-size:20px;color:#dce96d}
+.manual-payment-whatsapp:hover{background:#24382a}
+.manual-payment-fallback small{display:block;margin-top:12px;color:#687267;font-size:10px;line-height:1.6;text-align:center}
+.qr-fallback-label{display:grid;gap:6px;margin:0 0 14px}
+.qr-fallback-label strong{font-size:20px;color:#17241c}
+.qr-fallback-label span{font-size:12px;line-height:1.5;color:#667068}
+.qr-security-note{margin-top:14px;padding:11px 12px;border-radius:12px;background:#eef0df;color:#4d5b38;font-size:11px;line-height:1.5}
+@media(max-width:700px){.manual-payment-fallback{padding:17px 15px}.manual-payment-heading h3{font-size:20px}.manual-payment-whatsapp{font-size:12px}}
