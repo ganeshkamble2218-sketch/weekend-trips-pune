@@ -135,4 +135,22 @@
  }catch(e){}
 })();
 </script><!-- Razorpay checkout deployment refresh 2026-10-03 -->
-</body></html>
+<script>
+/* Mobile tap recovery: if another layer intercepts a tap over the Razorpay button,
+   forward that tap to the checkout action and show visible feedback. */
+(function(){
+ function paymentTapRecovery(e){
+  var b=document.getElementById('payNowBtn');
+  if(!b)return;
+  var r=b.getBoundingClientRect();
+  var x=e.clientX,y=e.clientY;
+  if(x<r.left||x>r.right||y<r.top||y>r.bottom)return;
+  if(e.target===b||b.contains(e.target))return;
+  e.preventDefault();e.stopPropagation();
+  if(window.startPayment){window.startPayment();}
+  else {b.textContent='Payment is loading…';b.style.background='#9a3c24';setTimeout(function(){b.textContent='Pay securely with Razorpay →';},1800);}
+ }
+ document.addEventListener('click',paymentTapRecovery,true);
+ document.addEventListener('pointerup',function(e){if(e.pointerType==='touch')paymentTapRecovery(e);},true);
+})();
+</script></body></html>
