@@ -2,30 +2,35 @@
 function populateWeekendDates(){
  const el=document.getElementById('seatDate');
  if(!el)return;
- const tripEl=document.getElementById('tripSeat');
- const trip=tripEl?tripEl.value:'Kaas Pathar';
- const sundayTrips=['Kaas Pathar','Kokan'];
- const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay','Kokan 1 Night / 2 Days'];
- const wantedDay=sundayTrips.includes(trip)?0:saturdayTrips.includes(trip)?6:null;
+ const trip=document.getElementById('tripSeat')?.value||'Kaas Pathar';
  el.innerHTML='';
+ if(trip==='Kokan 1 Night / 2 Days'){
+  const option=document.createElement('option');
+  option.value='2026-10-24';
+  option.textContent='Saturday — 24 Oct 2026';
+  el.appendChild(option);
+  el.value='2026-10-24';
+  return;
+ }
+ const sundayTrips=['Kaas Pathar','Kokan'];
+ const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay'];
+ const wantedDay=sundayTrips.includes(trip)?0:saturdayTrips.includes(trip)?6:null;
  const first=document.createElement('option');
  first.value='';
  first.textContent=wantedDay===0?'Select Sunday':wantedDay===6?'Select Saturday':'Select date';
  el.appendChild(first);
  if(wantedDay===null)return;
- const today=new Date();
- today.setHours(0,0,0,0);
- for(let i=0;i<370;i++){
-   const d=new Date(today);
-   d.setDate(today.getDate()+i);
-   if(d.getDay()!==wantedDay)continue;
-   const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-   const option=document.createElement('option');
-   option.value=value;
-   option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-   el.appendChild(option);
+ const today=new Date();today.setHours(0,0,0,0);
+ for(let n=0;n<370;n++){
+  const d=new Date(today);d.setDate(today.getDate()+n);
+  if(d.getDay()!==wantedDay)continue;
+  const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const option=document.createElement('option');option.value=value;
+  option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  el.appendChild(option);
  }
 }
+
 function isWeekendDate(value){
  if(!value)return false;
  const trip=document.getElementById('tripSeat')?.value||'';
