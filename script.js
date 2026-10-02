@@ -229,7 +229,7 @@ async function startPayment(){
  const name=document.getElementById('seatName')?.value.trim(),phone=document.getElementById('seatPhone')?.value.trim();
  const trip=seatTrip?.value,date=seatDate?.value,pickup=document.getElementById('seatPickup')?.value,payment=getPaymentTotals();
  if(!date||!name||!phone||!pickup||!selectedSeats.length){seatStatus.textContent='Please complete date, seats, name, mobile and pickup first.';return;}
- if(!/^\\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
+ if(!/^\d{10}$/.test(phone)){seatStatus.textContent='Please enter a valid 10-digit mobile number.';return;}
  if(!isWeekendDate(date)||!payment.total){seatStatus.textContent='Please select the correct trip day and at least one seat.';return;}
  if(payNowBtn)payNowBtn.disabled=true;
  seatStatus.textContent='Loading secure Razorpay checkout…';
