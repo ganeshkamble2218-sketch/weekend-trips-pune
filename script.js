@@ -5,7 +5,7 @@ function populateWeekendDates(){
  const tripEl=document.getElementById('tripSeat');
  const trip=tripEl?tripEl.value:'Kaas Pathar';
  const sundayTrips=['Kaas Pathar','Kokan'];
- const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay'];
+ const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay','Kokan 1 Night / 2 Days'];
  const wantedDay=sundayTrips.includes(trip)?0:saturdayTrips.includes(trip)?6:null;
  el.innerHTML='';
  const first=document.createElement('option');
@@ -31,7 +31,7 @@ function isWeekendDate(value){
  const d=new Date(value+'T00:00:00');
  const trip=document.getElementById('tripSeat')?.value||'';
  if(trip==='Kaas Pathar'||trip==='Kokan')return d.getDay()===0;
- if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay')return d.getDay()===6;
+ if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay'||trip==='Kokan 1 Night / 2 Days')return d.getDay()===6;
  return false;
 }
 document.querySelectorAll('[data-trip]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const trip=a.dataset.trip;const select=document.getElementById('trip');[...select.options].forEach(o=>{if(o.text.startsWith(trip))select.value=o.value});const seatTrip=document.getElementById('tripSeat');const seatBooking=document.getElementById('seatBooking');const selectedTitle=document.getElementById('selectedTripTitle');if(seatTrip){seatTrip.value=trip;fillPickupSelect('seatPickup',trip);fillPickupSelect('pickup',trip);selectedTitle.textContent=trip;populateWeekendDates();seatBooking.hidden=false;seatBooking.classList.add('open');setTimeout(()=>seatBooking.scrollIntoView({behavior:'smooth',block:'start'}),80);}}));
@@ -40,7 +40,7 @@ const form=document.getElementById('bookingForm');
 form?.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),trip=document.getElementById('trip').value,seats=document.getElementById('seats').value,date=document.getElementById('date').value,pickup=document.getElementById('pickup').value,request=document.getElementById('request').value.trim();const msg='Hello Weekend Trips Pune!%0A%0A*Booking Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(seats)+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ASpecial Request: '+encodeURIComponent(request||'None')+'%0A%0APlease confirm my booking.';window.open('https://wa.me/918983416827?text='+msg,'_blank');});
 
 const SEAT_ROWS=[[1],[2,3,4],[5,6,7],[8,9,10],[11,12,13],[14,15,16],[17,18,19]];
-const SEAT_PRICES={'Kaas Pathar':1499,'Kokan':1050,'Matheran':999,'Mahabaleshwar':1000,'Harihareshwar – Diveagar':1200,'Kaas Pathar + Mahabaleshwar Stay':3199};
+const SEAT_PRICES={'Kaas Pathar':1499,'Kokan':1050,'Matheran':999,'Mahabaleshwar':1000,'Harihareshwar – Diveagar':1200,'Kaas Pathar + Mahabaleshwar Stay':3199,'Kokan 1 Night / 2 Days':4049};
 const PICKUP_POINTS={
   'Kaas Pathar':[
     'Noble Hospital — 04:45 AM',
@@ -81,6 +81,21 @@ const PICKUP_POINTS={
     'Jehangir Hospital — 06:25 AM',
     'JM Road Kalaniketan — 06:30 AM',
     'Aundh Brehman Chowk — 06:40 AM',
+    'Jagtap Dairy — 06:50 AM',
+    'Dange Chowk — 07:00 AM',
+    'Bhujbal Chowk — 07:15 AM',
+    'Shri Chhatrapati Shivaji Maharaj Chowk — 07:30 AM',
+    'Ghotawade Phata — 07:45 AM'
+  ],
+  'Kokan 1 Night / 2 Days':[
+    'Nobel Hospital — 05:45 AM',
+    'Sainath Nagar — 06:00 AM',
+    'Kharadi – Chandan Nagar — 06:05 AM',
+    'Viman Nagar — 06:15 AM',
+    'Yerwada — 06:20 AM',
+    'Jehangir Hospital — 06:25 AM',
+    'JM Road Kalaniketan — 06:30 AM',
+    'Aundh Bremen Chowk — 06:40 AM',
     'Jagtap Dairy — 06:50 AM',
     'Dange Chowk — 07:00 AM',
     'Bhujbal Chowk — 07:15 AM',
