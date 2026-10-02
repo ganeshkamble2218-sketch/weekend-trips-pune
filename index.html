@@ -80,6 +80,11 @@
   const el=document.getElementById('seatDate'),tripEl=document.getElementById('tripSeat');
   if(!el||!tripEl)return;
   const trip=tripEl.value;
+  if(trip==='Kokan 1 Night / 2 Days'){
+   el.innerHTML='<option value="2026-10-24">Saturday — 24 Oct 2026</option>';
+   el.value='2026-10-24';
+   return;
+  }
   const sunday=trip==='Kaas Pathar'||trip==='Kokan';
   const saturday=trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay';
   const day=sunday?0:saturday?6:null;
