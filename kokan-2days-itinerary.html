@@ -9,6 +9,12 @@
 <link rel="stylesheet" href="style.css?v=premium-3d-20260928-2">
 <style>
 .kokan-gallery{max-width:1100px;margin:28px auto 8px;padding:0 18px}.kokan-gallery h2{margin:0 0 14px}.kokan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.kokan-grid img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.14)}.kokan-banner{margin:0 0 24px;padding:30px;border-radius:24px;background:linear-gradient(135deg,#123c35,#24745e);color:#fff;box-shadow:0 16px 38px rgba(18,60,53,.18)}.kokan-banner h1{margin:10px 0;font-size:clamp(32px,5vw,48px);line-height:1.1}.kokan-price{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0}.kokan-price strong{font-size:30px}.kokan-discount{display:inline-block;padding:6px 10px;border-radius:99px;background:#e7f6b5;color:#21452c;font-weight:800}.kokan-date{display:inline-block;padding:7px 12px;border-radius:99px;background:#e7f6b5;color:#21452c;font-weight:800;font-size:13px}@media(max-width:700px){.kokan-grid{grid-template-columns:1fr}.kokan-banner{padding:22px}}
+
+/* Mobile fix: keep the Kokan stay-trip pickup control directly tappable. */
+#kokan-booking .seat-toolbar label{position:relative!important;z-index:20!important;display:block!important;pointer-events:auto!important}
+#kokan-booking #seatPickup{display:block!important;position:relative!important;z-index:21!important;width:100%!important;min-height:56px!important;padding:16px 44px 16px 14px!important;margin-top:8px!important;appearance:auto!important;-webkit-appearance:menulist!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;background:#fcfdfb!important;color:#17211b!important;border:2px solid #b8c83b!important;border-radius:12px!important;font-size:16px!important;line-height:1.35!important}
+#kokan-booking #seatPickup:focus{outline:3px solid rgba(184,200,59,.35)!important;outline-offset:2px!important}
+#kokan-booking .seat-toolbar label:has(#seatPickup){isolation:isolate!important}
 </style>
 </head><body>
 <nav><a class="brand-logo" href="index.html" aria-label="Pune Weekend Getaways home"><img src="pune-weekend-getaways-logo.svg" alt="Pune Weekend Getaways logo"><span class="brand-word"><strong>Pune Weekend</strong><span>GETAWAYS</span></span></a><div class="navlinks"><a href="index.html">Home</a><a class="navbook" href="#kokan-booking">Book Now</a></div></nav>
@@ -49,5 +55,5 @@
 <div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&amp;margin=10&amp;data=upi%3A%2F%2Fpay%3Fpa%3Dganeshk1234567amble-2%40oksbi%26pn%3DWeekend%2520Trips%2520Pune" alt="Pune Weekend Getaways UPI payment QR code" width="260" height="260"><p>Scan with Google Pay, PhonePe or Paytm</p></div></div></section>
 <a class="call-float" href="tel:+918983416827" aria-label="Call Pune Weekend Getaways"><span>📞</span></a>
 <footer><p>Bookings and enquiries: 8983416827</p><small>© 2026 Pune Weekend Getaways</small></footer>
-<script src="booking-engine-final-19seats.js?v=kokan2-systematic-20261003-1"></script>
+<script src="booking-engine-final-19seats.js?v=kokan-pickup-tapfix-20261003-2"></script>
 </body></html>
