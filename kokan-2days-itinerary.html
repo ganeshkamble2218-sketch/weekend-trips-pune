@@ -15,6 +15,15 @@
 #kokan-booking #seatPickup{display:block!important;position:relative!important;z-index:21!important;width:100%!important;min-height:56px!important;padding:16px 44px 16px 14px!important;margin-top:8px!important;appearance:auto!important;-webkit-appearance:menulist!important;pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important;background:#fcfdfb!important;color:#17211b!important;border:2px solid #b8c83b!important;border-radius:12px!important;font-size:16px!important;line-height:1.35!important}
 #kokan-booking #seatPickup:focus{outline:3px solid rgba(184,200,59,.35)!important;outline-offset:2px!important}
 #kokan-booking .seat-toolbar label:has(#seatPickup){isolation:isolate!important}
+
+/* Reliable custom pickup picker for the Kokan stay trip on mobile */
+#kokan-booking .pickup-picker{position:relative!important;z-index:100!important;isolation:isolate!important}
+#kokan-booking .pickup-picker-button{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;width:100%!important;min-height:56px!important;padding:14px 16px!important;border:2px solid #b8c83b!important;border-radius:12px!important;background:#fcfdfb!important;color:#17211b!important;font:inherit!important;font-size:16px!important;text-align:left!important;cursor:pointer!important;touch-action:manipulation!important;pointer-events:auto!important;position:relative!important;z-index:101!important}
+#kokan-booking .pickup-picker-menu{position:absolute!important;top:calc(100% + 5px)!important;left:0!important;right:0!important;max-height:280px!important;overflow-y:auto!important;overscroll-behavior:contain!important;background:#fff!important;border:1px solid #dce1d8!important;border-radius:12px!important;box-shadow:0 14px 32px rgba(0,0,0,.18)!important;z-index:1000!important;padding:5px!important}
+#kokan-booking .pickup-picker-menu[hidden]{display:none!important}
+#kokan-booking .pickup-picker-option{display:block!important;width:100%!important;min-height:46px!important;padding:12px!important;border:0!important;border-radius:8px!important;background:#fff!important;color:#17211b!important;font:inherit!important;font-size:15px!important;text-align:left!important;white-space:normal!important;cursor:pointer!important;touch-action:manipulation!important}
+#kokan-booking .pickup-picker-option:active,#kokan-booking .pickup-picker-option:focus{background:#f0f4d8!important;outline:2px solid #b8c83b!important}
+#kokan-booking .pickup-native-select{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;left:-9999px!important}
 </style>
 </head><body>
 <nav><a class="brand-logo" href="index.html" aria-label="Pune Weekend Getaways home"><img src="pune-weekend-getaways-logo.svg" alt="Pune Weekend Getaways logo"><span class="brand-word"><strong>Pune Weekend</strong><span>GETAWAYS</span></span></a><div class="navlinks"><a href="index.html">Home</a><a class="navbook" href="#kokan-booking">Book Now</a></div></nav>
@@ -42,7 +51,7 @@
 <div class="selected-trip-title"><span>Selected trip</span><strong id="selectedTripTitle">Kokan 1 Night / 2 Days</strong></div>
 <div class="seat-toolbar"><label>Destination<select id="tripSeat"><option value="Kokan 1 Night / 2 Days" selected>Kokan 1 Night / 2 Days — ₹4,049 (10% off)</option></select></label>
 <label>Travel Date<select id="seatDate" required><option value="">Loading departure date…</option></select><small class="date-note">Saturday, 24 October 2026 only</small></label>
-<label>Pickup Location<select id="seatPickup" required><option value="">Select pickup location</option></select><div id="pickupAddress" class="pickup-address" style="margin-top:8px;font-size:13px;line-height:1.45"></div></label></div>
+<label>Pickup Location<div class="pickup-picker" id="pickupPicker"><button type="button" id="pickupPickerButton" class="pickup-picker-button" aria-expanded="false" aria-controls="pickupPickerMenu">Select pickup location <span aria-hidden="true">▾</span></button><div id="pickupPickerMenu" class="pickup-picker-menu" hidden></div><select id="seatPickup" required aria-label="Pickup location" class="pickup-native-select"><option value="">Select pickup location</option></select></div><div id="pickupAddress" class="pickup-address" style="margin-top:8px;font-size:13px;line-height:1.45"></div></label></div>
 <div class="seat-legend"><span><i class="available"></i>Available</span><span><i class="chosen"></i>Selected</span><span><i class="blocked"></i>Booked</span></div>
 <div class="bus-board"><p class="admin-note">Select an available seat</p><div class="bus-front"><div>19</div><div>Driver</div></div><div id="seatMap" class="seat-map"></div><div class="bus-count">19 seats</div></div>
 <div class="seat-customer"><label>Full Name<input id="seatName" type="text" placeholder="Enter your name"></label><label>Mobile Number<input id="seatPhone" type="tel" placeholder="Enter 10-digit mobile number" inputmode="numeric"></label><div class="seat-total">Selected seats total <strong id="seatTotal">₹0</strong></div><button id="seatBookBtn" class="book-submit" type="button">Continue to Payment →</button></div><p id="seatStatus" class="secure-note" aria-live="polite"></p></div></div></section>
@@ -55,5 +64,40 @@
 <div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&amp;margin=10&amp;data=upi%3A%2F%2Fpay%3Fpa%3Dganeshk1234567amble-2%40oksbi%26pn%3DWeekend%2520Trips%2520Pune" alt="Pune Weekend Getaways UPI payment QR code" width="260" height="260"><p>Scan with Google Pay, PhonePe or Paytm</p></div></div></section>
 <a class="call-float" href="tel:+918983416827" aria-label="Call Pune Weekend Getaways"><span>📞</span></a>
 <footer><p>Bookings and enquiries: 8983416827</p><small>© 2026 Pune Weekend Getaways</small></footer>
-<script src="booking-engine-final-19seats.js?v=kokan-pickup-tapfix-20261003-2"></script>
+<script src="booking-engine-final-19seats.js?v=kokan-custom-pickup-20261003-3"></script>
+<script>
+(function(){
+ const select=document.getElementById('seatPickup');
+ const trigger=document.getElementById('pickupPickerButton');
+ const menu=document.getElementById('pickupPickerMenu');
+ const wrap=document.getElementById('pickupPicker');
+ if(!select||!trigger||!menu||!wrap)return;
+ function syncMenu(){
+   const selected=select.options[select.selectedIndex];
+   trigger.innerHTML=(selected&&selected.value?selected.textContent:'Select pickup location')+' <span aria-hidden="true">▾</span>';
+   menu.innerHTML='';
+   Array.from(select.options).filter(o=>o.value).forEach(option=>{
+     const b=document.createElement('button');
+     b.type='button';b.className='pickup-picker-option';b.textContent=option.textContent;
+     b.addEventListener('click',function(){
+       select.value=option.value;
+       select.dispatchEvent(new Event('change',{bubbles:true}));
+       trigger.innerHTML=option.textContent+' <span aria-hidden="true">▾</span>';
+       menu.hidden=true;trigger.setAttribute('aria-expanded','false');
+     });
+     menu.appendChild(b);
+   });
+ }
+ function toggleMenu(){
+   syncMenu();
+   menu.hidden=!menu.hidden;
+   trigger.setAttribute('aria-expanded',String(!menu.hidden));
+ }
+ trigger.addEventListener('click',toggleMenu);
+ document.addEventListener('click',function(e){if(!wrap.contains(e.target)){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}});
+ select.addEventListener('change',syncMenu);
+ syncMenu();
+ const observer=new MutationObserver(syncMenu);observer.observe(select,{childList:true});
+})();
+</script>
 </body></html>
