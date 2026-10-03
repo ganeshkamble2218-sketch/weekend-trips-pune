@@ -369,6 +369,8 @@ document.getElementById('seatBookBtn')?.addEventListener('click',()=>{
    setTimeout(()=>document.getElementById('payNowBtn')?.focus(),650);
  }
 });
+/* Fix: the dedicated Kokan 1 Night / 2 Days page starts with an already-selected trip, so populate its pickup menu on initial load. */
+try{const initialTrip=document.getElementById('tripSeat')?.value||'';if(initialTrip){fillPickupSelect('seatPickup',initialTrip);fillPickupSelect('pickup',initialTrip);}}catch(e){}
 populateWeekendDates();drawSeats();updateSeatTotal();updatePaymentUI();
 
 document.querySelectorAll('input[name="paymentPlan"]').forEach(r=>r.addEventListener('change',updatePaymentUI));
