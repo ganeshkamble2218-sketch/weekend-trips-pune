@@ -6,6 +6,7 @@ function populateWeekendDates(){
  const oldTripEl=document.getElementById('trip');
  const trip=seatTripEl?.value||'';
  const sundayTrips=['Kaas Pathar','Kokan'];
+  const bothDayTrips=['Alibaug'];
  const specialKokan='Kokan 1 Night / 2 Days';
  const saturdayTrips=['Harihareshwar – Diveagar','Matheran','Mahabaleshwar','Kaas Pathar + Mahabaleshwar Stay'];
  const wantedDay=(trip===specialKokan||saturdayTrips.includes(trip))?6:sundayTrips.includes(trip)?0:null;
@@ -17,15 +18,15 @@ function populateWeekendDates(){
    first.value='';
    first.textContent=wantedDay===0?'Select a Sunday date':wantedDay===6?'Select a Saturday date':'Select trip first';
    el.appendChild(first);
-   if(wantedDay===null)return;
+   if(wantedDay===null && !bothDayTrips.includes(trip))return;
    const today=new Date(); today.setHours(0,0,0,0);
    for(let i=0;i<370;i++){
      const d=new Date(today); d.setDate(today.getDate()+i);
-     if(d.getDay()!==wantedDay)continue;
+     if(bothDayTrips.includes(trip)?(d.getDay()!==0&&d.getDay()!==6):(d.getDay()!==wantedDay))continue;
      const value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
      const option=document.createElement('option');
      option.value=value;
-     option.textContent=(wantedDay===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+     option.textContent=(d.getDay()===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
      el.appendChild(option);
    }
  };
@@ -41,7 +42,8 @@ function isWeekendDate(value){
  const d=new Date(value+'T00:00:00');
  const trip=document.getElementById('tripSeat')?.value||'';
  if(trip==='Kokan 1 Night / 2 Days')return value==='2026-10-24';
- if(trip==='Kaas Pathar'||trip==='Kokan')return d.getDay()===0;
+ if(trip==='Alibaug')return d.getDay()===0||d.getDay()===6;
+  if(trip==='Kaas Pathar'||trip==='Kokan')return d.getDay()===0;
  if(trip==='Harihareshwar – Diveagar'||trip==='Matheran'||trip==='Mahabaleshwar'||trip==='Kaas Pathar + Mahabaleshwar Stay')return d.getDay()===6;
  return false;
 }
@@ -52,8 +54,11 @@ const form=document.getElementById('bookingForm');
 form?.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('name').value.trim(),phone=document.getElementById('phone').value.trim(),trip=document.getElementById('trip').value,seats=document.getElementById('seats').value,date=document.getElementById('date').value,pickup=document.getElementById('pickup').value,request=document.getElementById('request').value.trim();const msg='Hello Weekend Trips Pune!%0A%0A*Booking Request*%0AName: '+encodeURIComponent(name)+'%0AMobile: '+encodeURIComponent(phone)+'%0ATrip: '+encodeURIComponent(trip)+'%0ASeats: '+encodeURIComponent(seats)+'%0ATravel Date: '+encodeURIComponent(date)+'%0APickup Location: '+encodeURIComponent(pickup)+'%0ASpecial Request: '+encodeURIComponent(request||'None')+'%0A%0APlease confirm my booking.';window.open('https://wa.me/918983416827?text='+msg,'_blank');});
 
 const SEAT_ROWS=[[1],[2,3,4],[5,6,7],[8,9,10],[11,12,13],[14,15,16],[17,18,19]];
-const SEAT_PRICES={'Kaas Pathar':1499,'Kokan':1050,'Kokan 1 Night / 2 Days':4049,'Matheran':999,'Mahabaleshwar':1000,'Harihareshwar – Diveagar':1200,'Kaas Pathar + Mahabaleshwar Stay':3199};
+const SEAT_PRICES={'Kaas Pathar':1499,'Kokan':1050,'Kokan 1 Night / 2 Days':4049,'Matheran':999,'Mahabaleshwar':1000,'Harihareshwar – Diveagar':1200,'Kaas Pathar + Mahabaleshwar Stay':3199,'Alibaug':1100};
 const PICKUP_POINTS={
+  'Alibaug':[
+    'Noble Hospital — 05:35 AM','Mundhwa Chowk — 05:50 AM','Kharadi — 06:00 AM','Viman Nagar — 06:15 AM','Yerwada — 06:20 AM','Jahangir Hospital — 06:25 AM','JM Road – Kalaniketan — 06:30 AM','Aundh Bremen Chowk — 06:40 AM','Jagtap Dairy — 06:50 AM','Dange Chowk — 07:00 AM','Bhujbal Chowk — 07:15 AM'
+  ],
   'Kaas Pathar':[
     'Noble Hospital — 04:45 AM',
     'Sainath Nagar — 04:55 AM',
