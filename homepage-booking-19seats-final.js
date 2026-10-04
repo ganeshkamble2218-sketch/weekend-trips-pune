@@ -178,17 +178,18 @@ const seatMap=document.getElementById('seatMap'),seatTrip=document.getElementByI
 function setTripDates(){
  const t=seatTrip?.value||'';
  const day=(t==='Kaas Pathar'||t==='Kokan')?0:(t==='Matheran'||t==='Mahabaleshwar'||t==='Harihareshwar – Diveagar'||t==='Kaas Pathar + Mahabaleshwar Stay')?6:null;
+  const bothDays=t==='Alibaug';
  if(!seatDate)return;
  seatDate.innerHTML='<option value="">'+(day===0?'Select Sunday':day===6?'Select Saturday':'Select trip first')+'</option>';
- if(day===null)return;
+ if(day===null&&!bothDays)return;
  const today=new Date(); today.setHours(0,0,0,0);
  for(let i=0;i<=370;i++){
    const d=new Date(today); d.setDate(today.getDate()+i);
-   if(d.getDay()!==day)continue;
+   if(bothDays?(d.getDay()!==0&&d.getDay()!==6):(d.getDay()!==day))continue;
    const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');
    const o=document.createElement('option');
    o.value=y+'-'+m+'-'+dd;
-   o.textContent=(day===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+   o.textContent=(d.getDay()===0?'Sunday':'Saturday')+' — '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
    seatDate.appendChild(o);
  }
 }
